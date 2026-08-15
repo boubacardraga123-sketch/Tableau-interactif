@@ -193,11 +193,13 @@ label.f-label{font-size:11px;font-weight:700;color:var(--ink-soft);margin-bottom
 .size-btns{display:flex;gap:4px}
 .size-btns button,.btn-mini{padding:5px 9px;border-radius:8px;border:1.5px solid var(--rule);background:#fff;color:var(--ink-soft);font-size:11px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif}
 .size-btns button:hover,.btn-mini:hover{background:#f5efdd}
-.draw-canvas{width:100%;height:220px;border-radius:10px;border:1.5px solid var(--rule);touch-action:none;background:#fff;display:block;cursor:crosshair}
+.draw-board-frame{position:relative;border-radius:14px;padding:9px;background:linear-gradient(180deg, var(--board) 0%, var(--board-dark) 100%);border:1px solid var(--board-edge);box-shadow:0 3px 10px rgba(20,15,5,.2), inset 0 0 0 1px rgba(255,255,255,.03)}
+.draw-board-frame::after{content:'';position:absolute;inset:9px;border-radius:8px;background-image:repeating-linear-gradient(115deg, rgba(255,255,255,.02) 0 2px, transparent 2px 7px);pointer-events:none}
+.draw-canvas{width:100%;height:380px;border-radius:8px;touch-action:none;background:#15181b;display:block;cursor:crosshair;position:relative;z-index:1}
 .q-dessin-img,.r-dessin-img{max-width:100%;border-radius:9px;margin-top:8px;border:1px solid var(--rule);display:block}
 
 /* ── Outils mathématiques : indice & puissance ── */
-.math-tools{display:flex;gap:6px;margin-top:6px}
+.math-tools{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
 .math-tools .btn-mini.active{background:var(--stylo);color:#fff;border-color:var(--stylo)}
 .math-palette{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;padding:8px;background:#f5efdd;border-radius:9px;border:1.5px solid var(--rule)}
 .math-key{width:32px;height:32px;border-radius:7px;border:1.5px solid var(--rule);background:#fff;font-family:'DM Mono',monospace;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink);display:flex;align-items:center;justify-content:center;padding:0}
@@ -303,25 +305,26 @@ function composerHtml(prefix, placeholder){
     <div id="${prefix}-text-wrap">
       <textarea id="${prefix}-text" placeholder="${esc(placeholder)}"></textarea>
       <div class="math-tools">
-        <button type="button" class="btn-mini" id="${prefix}-mathbtn-sup" onclick="toggleMathPalette('${prefix}','sup')">xⁿ Puissance</button>
-        <button type="button" class="btn-mini" id="${prefix}-mathbtn-sub" onclick="toggleMathPalette('${prefix}','sub')">xₙ Indice</button>
+        ${Object.keys(MATH_CATEGORIES).map(cat=>`<button type="button" class="btn-mini" id="${prefix}-mathbtn-${cat}" onclick="toggleMathPalette('${prefix}','${cat}')">${MATH_CATEGORIES[cat].short}</button>`).join('')}
       </div>
       <div id="${prefix}-mathpalette" class="math-palette" style="display:none"></div>
     </div>
     <div id="${prefix}-draw-wrap" style="display:none">
       <div class="draw-toolbar">
         <div class="color-swatches">
-          ${['#1a1f2e','#ef4444','#2563eb','#10b981','#f59e0b'].map((c,i)=>`<button type="button" class="swatch" style="background:${c}${i===0?';box-shadow:0 0 0 2px #6366f1':''}" onclick="setCanvasColor('${prefix}-canvas','${c}')" title="Couleur"></button>`).join('')}
+          ${['#f6f2e6','#f0c14b','#e8877a','#7fb8d8','#8fc9a1'].map((c,i)=>`<button type="button" class="swatch" style="background:${c}${i===0?';box-shadow:0 0 0 2px #6366f1':''}" onclick="setCanvasColor('${prefix}-canvas','${c}')" title="Couleur"></button>`).join('')}
         </div>
         <div class="size-btns">
-          <button type="button" onclick="setCanvasSize('${prefix}-canvas',2)">Fin</button>
-          <button type="button" onclick="setCanvasSize('${prefix}-canvas',5)">Moyen</button>
-          <button type="button" onclick="setCanvasSize('${prefix}-canvas',10)">Épais</button>
+          <button type="button" onclick="setCanvasSize('${prefix}-canvas',3)">Fin</button>
+          <button type="button" onclick="setCanvasSize('${prefix}-canvas',6)">Moyen</button>
+          <button type="button" onclick="setCanvasSize('${prefix}-canvas',14)">Épais</button>
         </div>
         <button type="button" class="btn-mini" onclick="undoCanvas('${prefix}-canvas')">↩️ Annuler</button>
         <button type="button" class="btn-mini" onclick="clearCanvas('${prefix}-canvas')">🗑️ Effacer</button>
       </div>
-      <canvas id="${prefix}-canvas" width="600" height="240" class="draw-canvas"></canvas>
+      <div class="draw-board-frame">
+        <canvas id="${prefix}-canvas" width="800" height="500" class="draw-canvas"></canvas>
+      </div>
     </div>
     <div id="${prefix}-audio-wrap" style="display:none">
       <div class="audio-rec">
@@ -344,9 +347,14 @@ window.switchComposerMode = function(prefix, mode){
   if(mode==='dessin') initCanvas(prefix+'-canvas');
 };
 
-// ── Outils mathématiques : insertion d'exposants (puissance) et indices ──
-const MATH_SUP_MAP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','+':'⁺','−':'⁻','n':'ⁿ','i':'ⁱ','x':'ˣ','(':'⁽',')':'⁾'};
-const MATH_SUB_MAP = {'0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉','+':'₊','−':'₋','n':'ₙ','x':'ₓ','a':'ₐ','e':'ₑ','(':'₍',')':'₎'};
+// ── Outils mathématiques : exposants, indices, opérateurs, symboles, fonctions ──
+const MATH_CATEGORIES = {
+  sup: { label:'Puissance', short:'xⁿ', items:['⁰','¹','²','³','⁴','⁵','⁶','⁷','⁸','⁹','⁺','⁻','ⁿ','ⁱ','ˣ','⁽','⁾'] },
+  sub: { label:'Indice',    short:'xₙ', items:['₀','₁','₂','₃','₄','₅','₆','₇','₈','₉','₊','₋','ₙ','ₐ','ₑ','ₓ','₍','₎'] },
+  op:  { label:'Opérateurs',short:'±',  items:['×','÷','±','∓','≤','≥','≠','≈','∞','°','·'] },
+  sym: { label:'Symboles',  short:'√',  items:['√','∛','π','Δ','∑','∫','∂','→','∈','∉','∀','∃','∅','∪','∩','⊂','⊥','∥','∠'] },
+  fn:  { label:'Fonctions', short:'ƒ(x)',items:['sin(','cos(','tan(','log(','ln(','lim ','√(','exp('] }
+};
 
 function insertAtCursor(fieldId, text){
   const el = document.getElementById(fieldId);
@@ -360,26 +368,27 @@ function insertAtCursor(fieldId, text){
   el.setSelectionRange(pos,pos);
 }
 
-window.toggleMathPalette = function(prefix, type){
+window.closeMathPalette = function(prefix){
+  const pal = document.getElementById(prefix+'-mathpalette');
+  if(pal) pal.style.display = 'none';
+  document.querySelectorAll(`[id^="${prefix}-mathbtn-"]`).forEach(b=>b.classList.remove('active'));
+};
+
+window.toggleMathPalette = function(prefix, cat){
   const pal = document.getElementById(prefix+'-mathpalette');
   if(!pal) return;
-  const alreadyOpenSame = pal.style.display!=='none' && pal.dataset.type===type;
-  const supBtn = document.getElementById(prefix+'-mathbtn-sup');
-  const subBtn = document.getElementById(prefix+'-mathbtn-sub');
-  if(alreadyOpenSame){
-    pal.style.display = 'none';
-    if(supBtn) supBtn.classList.remove('active');
-    if(subBtn) subBtn.classList.remove('active');
-    return;
-  }
-  const map = type==='sup' ? MATH_SUP_MAP : MATH_SUB_MAP;
-  pal.dataset.type = type;
-  pal.innerHTML = Object.keys(map).map(k=>
-    `<button type="button" class="math-key" title="${type==='sup'?'Puissance':'Indice'} ${esc(k)}" onclick="insertAtCursor('${prefix}-text','${map[k]}')">${map[k]}</button>`
-  ).join('') + `<button type="button" class="math-key math-key-close" title="Fermer" onclick="document.getElementById('${prefix}-mathpalette').style.display='none';document.getElementById('${prefix}-mathbtn-sup')&&document.getElementById('${prefix}-mathbtn-sup').classList.remove('active');document.getElementById('${prefix}-mathbtn-sub')&&document.getElementById('${prefix}-mathbtn-sub').classList.remove('active')">✕</button>`;
+  const alreadyOpenSame = pal.style.display!=='none' && pal.dataset.cat===cat;
+  if(alreadyOpenSame){ window.closeMathPalette(prefix); return; }
+  const def = MATH_CATEGORIES[cat];
+  if(!def) return;
+  pal.dataset.cat = cat;
+  pal.innerHTML = def.items.map(it=>
+    `<button type="button" class="math-key" title="${esc(def.label)}" onclick="insertAtCursor('${prefix}-text', ${JSON.stringify(it)})">${esc(it)}</button>`
+  ).join('') + `<button type="button" class="math-key math-key-close" title="Fermer" onclick="closeMathPalette('${prefix}')">✕</button>`;
   pal.style.display = 'flex';
-  if(supBtn) supBtn.classList.toggle('active', type==='sup');
-  if(subBtn) subBtn.classList.toggle('active', type==='sub');
+  document.querySelectorAll(`[id^="${prefix}-mathbtn-"]`).forEach(b=>b.classList.remove('active'));
+  const btn = document.getElementById(prefix+'-mathbtn-'+cat);
+  if(btn) btn.classList.add('active');
 };
 
 // ── Enregistrement audio (message vocal) ──
@@ -488,7 +497,7 @@ function redrawCanvas(canvasId){
   const st = canvasStates[canvasId];
   if(!st) return;
   const ctx = st.ctx, canvas = st.canvas;
-  ctx.fillStyle = '#ffffff';
+  ctx.fillStyle = '#15181b';
   ctx.fillRect(0,0,canvas.width,canvas.height);
   st.strokes.forEach(s=>{
     if(s.points.length < 2){
@@ -514,7 +523,7 @@ function initCanvas(canvasId){
   if(!canvas || canvas.__inited) return;
   canvas.__inited = true;
   const ctx = canvas.getContext('2d');
-  const st = { canvas, ctx, strokes: [], current: null, color: '#1a1f2e', size: 3 };
+  const st = { canvas, ctx, strokes: [], current: null, color: '#f6f2e6', size: 4 };
   canvasStates[canvasId] = st;
   redrawCanvas(canvasId);
 
@@ -960,6 +969,26 @@ function renderAdminPanel(){
       <button class="link-btn" onclick="renderRoleSelect()">← Retour</button>
     </div>
     <div class="card">
+      <div style="font-family:'Fraunces',serif;font-weight:700;font-size:15px;color:var(--ink);margin-bottom:6px">📲 Installer l'application</div>
+      <div style="font-size:12.5px;color:var(--ink-soft);line-height:1.5;margin-bottom:10px">
+        Envoyez ce lien à vos élèves et professeurs pour qu'ils installent le Tableau d'échange comme une application sur leur téléphone (icône sur l'écran d'accueil, sans passer par un store).
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;background:#fff;border:1.5px solid var(--rule);border-radius:9px;padding:8px 10px;margin-bottom:12px">
+        <span id="ad-install-link" style="font-family:'DM Mono',monospace;font-size:11.5px;color:var(--ink-soft);word-break:break-all;flex:1"></span>
+        <button class="btn-mini" onclick="copierLienInstall()">🔗 Copier</button>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">🎒 Pour les élèves</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+        <button class="btn btn-green" onclick="partagerInstallWA('eleve')">📱 WhatsApp</button>
+        <button class="btn btn-ghost" onclick="partagerInstallEmail('eleve')">✉️ Email</button>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">🧑‍🏫 Pour les professeurs</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-green" onclick="partagerInstallWA('prof')">📱 WhatsApp</button>
+        <button class="btn btn-ghost" onclick="partagerInstallEmail('prof')">✉️ Email</button>
+      </div>
+    </div>
+    <div class="card">
       <div style="font-size:12.5px;color:var(--ink-soft);line-height:1.5">
         Les classes affichées ci-dessous proviennent de « Emploi du temps » (onglet Groupes/Classes → 🔄 Synchroniser vers Espace Prof).
         Chaque élève peut recevoir un <strong>lien personnel</strong> (ouvre directement son tableau, sans rien saisir), ou vous pouvez diffuser un code unique pour toute la classe.
@@ -967,8 +996,38 @@ function renderAdminPanel(){
     </div>
     <div id="ad-classes"></div>
   `);
+  const linkEl = document.getElementById('ad-install-link');
+  if(linkEl) linkEl.textContent = buildInstallLink();
   chargerClassesAdmin();
 }
+
+// ── Lien d'installation de l'application (PWA) ──
+function buildInstallLink(){
+  return `${window.location.origin}${window.location.pathname}`;
+}
+window.copierLienInstall = function(){
+  navigator.clipboard.writeText(buildInstallLink()).then(()=>alert("🔗 Lien d'installation copié !"));
+};
+function instructionsInstall(){
+  return `1️⃣ Ouvrez ce lien dans votre navigateur (Chrome ou Safari)\n2️⃣ Appuyez sur le menu (⋮ ou 📤) puis « Ajouter à l'écran d'accueil » / « Installer l'application »\n3️⃣ L'icône « Tableau d'échange » apparaîtra sur votre téléphone, comme une vraie application !`;
+}
+window.partagerInstallWA = function(cible){
+  const lien = buildInstallLink();
+  const suite = cible==='eleve'
+    ? `Ensuite, demandez le *code de votre classe* à votre professeur ou à l'administration pour vous connecter.`
+    : `Connectez-vous ensuite avec votre *code professeur* habituel.`;
+  const texte = `📲 Installez l'application *Tableau d'échange* sur votre téléphone :\n${lien}\n\n${instructionsInstall()}\n\n${suite}`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(texte)}`, '_blank');
+};
+window.partagerInstallEmail = function(cible){
+  const lien = buildInstallLink();
+  const sujet = cible==='eleve' ? "Installer l'application Tableau d'échange (Élèves)" : "Installer l'application Tableau d'échange (Professeurs)";
+  const suite = cible==='eleve'
+    ? `Ensuite, demandez le code de votre classe à votre professeur ou à l'administration pour vous connecter.`
+    : `Connectez-vous ensuite avec votre code professeur habituel.`;
+  const corps = `Bonjour,\n\nVoici le lien pour installer l'application « Tableau d'échange » sur votre téléphone :\n${lien}\n\nComment l'installer :\n${instructionsInstall()}\n\n${suite}\n\nClub Réussir Ensemble`;
+  window.open(`mailto:?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(corps)}`, '_blank');
+};
 
 let adEleveTokens = {}; // "classeId::eleveId" -> {token, eleveNom, createdAt}
 
