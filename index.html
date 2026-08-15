@@ -13,66 +13,171 @@
 <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="./icon-192.png">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+/* ══════════════════════════════════════════════════════════════
+   SYSTÈME DE DESIGN — « Ardoise & Cahier »
+   Un tableau de classe (en-tête ardoise, craie) qui ouvre sur des
+   pages de cahier d'écolier (papier crème, lignes réglées, marge
+   rouge). Accent « stylo bleu » (bleu Bic) hérité de l'écosystème
+   Club Réussir Ensemble pour les actions ; le vert sert aux
+   corrections du professeur, comme un stylo de correction.
+   ══════════════════════════════════════════════════════════════ */
+:root{
+  --board:#1e3d31; --board-dark:#142e24; --board-edge:#6b4a30;
+  --chalk:#f6f2e6; --chalk-dim:#bcccc0;
+  --paper:#faf5e9; --paper-card:#fffcf4; --rule:#e8dcc0;
+  --marge:#b5433f; --marge-soft:#e7c9c3;
+  --ink:#25303a; --ink-soft:#63707a;
+  --stylo:#6366f1; --stylo-dark:#4f52e0; --stylo-tint:#eef1ff;
+  --correction:#2f7d55; --correction-tint:#eaf6ee; --correction-dark:#215e3f;
+  --cover-eleve:#c1602f; --cover-prof:#2f6b4f; --cover-admin:#233a5c;
+  --danger:#ef4444; --danger-tint:#fdeceb;
+  --radius:12px;
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#f0f4f8;font-family:'DM Sans',sans-serif;min-height:100vh;padding:16px;color:#1a1f2e}
-h1{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:#1a1f2e;margin-bottom:2px}
-.subtitle{font-size:12.5px;color:#64748b;margin-bottom:16px}
-.wrap{max-width:720px;margin:0 auto}
+body{
+  background:var(--paper);
+  font-family:'DM Sans',sans-serif;
+  min-height:100vh;
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:720px;margin:0 auto;padding-bottom:24px}
 
-.card{background:#fff;border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
-.btn{padding:10px 16px;border-radius:10px;border:none;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
-.btn-primary{background:#6366f1;color:#fff}
-.btn-primary:hover{background:#4f52e0}
-.btn-green{background:#25d366;color:#fff}
-.btn-green:hover{background:#1ebe5c}
-.btn-ghost{background:#e0e7ff;color:#4338ca}
-.btn-ghost:hover{background:#c7d2fe}
-.btn-danger{background:#fee2e2;color:#ef4444}
+/* ── En-tête « ardoise » ── */
+.board-header{
+  background:
+    radial-gradient(ellipse at 18% 22%, rgba(255,255,255,.05), transparent 42%),
+    radial-gradient(ellipse at 82% 70%, rgba(255,255,255,.04), transparent 38%),
+    linear-gradient(180deg, var(--board) 0%, var(--board-dark) 100%);
+  border-bottom:5px solid var(--board-edge);
+  padding:22px 18px 18px;
+  margin-bottom:18px;
+  position:relative;
+  overflow:hidden;
+}
+.board-header::after{
+  content:'';
+  position:absolute; inset:0;
+  background-image:repeating-linear-gradient(115deg, rgba(255,255,255,.025) 0 2px, transparent 2px 7px);
+  pointer-events:none;
+}
+.board-inner{max-width:684px;margin:0 auto;position:relative;z-index:1}
+h1{
+  font-family:'Caveat',cursive;
+  font-weight:700;
+  font-size:34px;
+  line-height:1;
+  color:var(--chalk);
+  text-shadow:0 1px 0 rgba(0,0,0,.15);
+  letter-spacing:.3px;
+}
+.subtitle{font-size:12px;color:var(--chalk-dim);margin-top:4px;font-weight:500;letter-spacing:.2px}
+.craies{display:flex;gap:7px;margin-top:12px}
+.craie{width:15px;height:8px;border-radius:3px;box-shadow:inset 0 -2px 2px rgba(0,0,0,.15), 0 1px 1px rgba(0,0,0,.2)}
+
+/* ── Cartes génériques (page de cahier) ── */
+.card{
+  background:var(--paper-card);
+  background-image:repeating-linear-gradient(to bottom, transparent 0 27px, var(--rule) 27px 28px);
+  border-radius:var(--radius);
+  padding:16px 16px 16px 30px;
+  margin:0 0 14px;
+  box-shadow:0 1px 3px rgba(30,20,10,.08);
+  position:relative;
+  border:1px solid #f0e8d4;
+}
+.card::before{
+  content:'';
+  position:absolute; top:10px; bottom:10px; left:16px;
+  width:1.5px; background:var(--marge-soft);
+}
+.btn{padding:10px 16px;border-radius:9px;border:none;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:transform .1s,background .15s}
+.btn-primary{background:var(--stylo);color:#fff}
+.btn-primary:hover{background:var(--stylo-dark)}
+.btn-green{background:var(--correction);color:#fff}
+.btn-green:hover{background:var(--correction-dark)}
+.btn-ghost{background:var(--stylo-tint);color:var(--stylo-dark)}
+.btn-ghost:hover{background:#dfe3ff}
+.btn-danger{background:var(--danger-tint);color:var(--danger)}
 .btn-block{width:100%}
-.btn:active{opacity:.8}
+.btn:active{transform:scale(.98)}
 .btn:disabled{opacity:.5;cursor:not-allowed}
+.btn:focus-visible,.tab-chip:focus-visible,.role-card:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2.5px solid var(--stylo);outline-offset:2px}
 
-input[type=text],input[type=password],select,textarea{padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:13.5px;font-family:'DM Sans',sans-serif;outline:none;width:100%;background:#fff}
-input:focus,select:focus,textarea:focus{border-color:#6366f1}
+input[type=text],input[type=password],select,textarea{padding:10px 12px;border:1.5px solid var(--rule);border-radius:9px;font-size:13.5px;font-family:'DM Sans',sans-serif;outline:none;width:100%;background:#fff;color:var(--ink)}
+input:focus,select:focus,textarea:focus{border-color:var(--stylo)}
 textarea{resize:vertical;min-height:70px}
-label.f-label{font-size:11.5px;font-weight:700;color:#64748b;margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.3px}
+label.f-label{font-size:11px;font-weight:700;color:var(--ink-soft);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.5px}
 .field{margin-bottom:12px}
 
-/* ── Écran de rôle ── */
+/* ── Écran de rôle : couvertures de cahier ── */
 .role-grid{display:grid;grid-template-columns:1fr;gap:12px}
-.role-card{background:#fff;border-radius:16px;padding:22px 18px;box-shadow:0 1px 4px rgba(0,0,0,.07);cursor:pointer;display:flex;align-items:center;gap:14px;border:2px solid transparent;transition:all .15s}
-.role-card:hover{border-color:#6366f1;transform:translateY(-1px)}
-.role-emoji{font-size:30px;width:52px;height:52px;border-radius:14px;background:#eef2ff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.role-title{font-family:'Syne',sans-serif;font-size:15.5px;font-weight:800;color:#1a1f2e}
-.role-desc{font-size:12px;color:#64748b;margin-top:2px}
+.role-card{
+  border-radius:14px;padding:20px 18px 20px 26px;cursor:pointer;
+  display:flex;align-items:center;gap:14px;
+  border:none; position:relative; overflow:hidden;
+  box-shadow:0 2px 6px rgba(20,15,5,.16);
+  transition:transform .15s, box-shadow .15s;
+  color:#fff;
+}
+.role-card:hover{transform:translateY(-2px) rotate(-.15deg);box-shadow:0 6px 14px rgba(20,15,5,.22)}
+.role-card::before{ /* reliure spirale */
+  content:'';
+  position:absolute; top:8px; bottom:8px; left:8px; width:2px;
+  background-image:repeating-linear-gradient(to bottom, rgba(255,255,255,.55) 0 3px, transparent 3px 9px);
+}
+.role-card::after{ /* coin corné */
+  content:'';
+  position:absolute; top:0; right:0; width:0; height:0;
+  border-style:solid; border-width:0 22px 22px 0;
+  border-color:transparent rgba(0,0,0,.16) transparent transparent;
+}
+.role-card:nth-child(1){background:linear-gradient(155deg,var(--cover-eleve),#a1501f)}
+.role-card:nth-child(2){background:linear-gradient(155deg,var(--cover-prof),#1f5138)}
+.role-card:nth-child(3){background:linear-gradient(155deg,var(--cover-admin),#152743)}
+.role-emoji{font-size:26px;width:48px;height:48px;border-radius:11px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;flex-shrink:0;backdrop-filter:blur(2px)}
+.role-title{font-family:'Fraunces',serif;font-size:16.5px;font-weight:700;color:#fff}
+.role-desc{font-size:12px;color:rgba(255,255,255,.82);margin-top:2px}
 
-.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px;flex-wrap:wrap}
-.who-badge{font-size:11px;background:#eef2ff;color:#6366f1;border-radius:20px;padding:5px 12px;font-weight:700}
-.link-btn{background:none;border:none;color:#6366f1;font-weight:700;font-size:12.5px;cursor:pointer;text-decoration:underline}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin:0 0 14px;gap:10px;flex-wrap:wrap}
+.who-badge{font-size:11px;background:var(--stylo-tint);color:var(--stylo-dark);border-radius:20px;padding:5px 12px;font-weight:700}
+.link-btn{background:none;border:none;color:var(--stylo);font-weight:700;font-size:12.5px;cursor:pointer;text-decoration:underline}
 
-/* ── Onglets classes ── */
-.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px}
-.tab-chip{flex-shrink:0;padding:9px 16px;border-radius:11px;border:none;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12.5px;background:#fff;color:#64748b;box-shadow:0 1px 4px rgba(0,0,0,.07);white-space:nowrap}
-.tab-chip.active{background:#6366f1;color:#fff}
+/* ── Onglets classes : onglets de classeur ── */
+.tabs{display:flex;gap:4px;overflow-x:auto;margin:0}
+.tab-chip{
+  flex-shrink:0;padding:9px 16px 8px;border:none;font-weight:700;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:12.5px;
+  background:#efe6cd;color:var(--ink-soft);white-space:nowrap;
+  clip-path:polygon(10% 0,90% 0,100% 100%,0 100%);
+  margin-right:-4px;
+}
+.tab-chip.active{background:var(--paper-card);color:var(--stylo-dark);position:relative;z-index:1;box-shadow:0 -2px 4px rgba(20,15,5,.06)}
 
-/* ── Fil de questions ── */
-.q-item{background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-left:4px solid #6366f1}
-.q-item.answered{border-left-color:#10b981}
-.q-item.locked{opacity:.6}
+/* ── Fil de questions (entrées de cahier) ── */
+.q-item{background:var(--paper-card)}
+.q-item.locked{opacity:.65}
 .q-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;flex-wrap:wrap}
-.q-mat{font-size:10.5px;font-weight:700;background:#eef2ff;color:#4338ca;border-radius:6px;padding:2px 8px}
-.q-time{font-size:10.5px;color:#94a3b8;font-family:'DM Mono',monospace}
-.q-eleve{font-size:12px;font-weight:700;color:#1a1f2e;margin-bottom:4px}
-.q-text{font-size:13.5px;color:#334155;line-height:1.45;white-space:pre-wrap}
-.q-lock-note{font-size:11px;color:#94a3b8;margin-top:8px;font-style:italic}
+.q-mat{font-size:10px;font-weight:700;background:var(--stylo-tint);color:var(--stylo-dark);border-radius:5px;padding:3px 8px;text-transform:uppercase;letter-spacing:.3px}
+.q-time{font-size:10.5px;color:#a8998a;font-family:'DM Mono',monospace}
+.q-stamp{
+  font-family:'Fraunces',serif;font-weight:700;font-size:10.5px;color:var(--correction);
+  border:1.5px solid var(--correction);border-radius:5px;padding:1px 7px;
+  transform:rotate(-4deg);letter-spacing:.4px;text-transform:uppercase;
+}
+.q-eleve{font-family:'Fraunces',serif;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px}
+.q-text{font-size:13.5px;color:#3a4552;line-height:1.5;white-space:pre-wrap}
+.q-lock-note{font-size:11px;color:#a8998a;margin-top:8px;font-style:italic}
+.q-del-btn{background:none;border:none;color:var(--marge);font-size:14px;cursor:pointer;padding:3px 6px;border-radius:6px;line-height:1;flex-shrink:0}
+.q-del-btn:hover{background:var(--danger-tint)}
 
-.r-box{margin-top:10px;background:#f0fdf4;border-radius:10px;padding:10px 12px;border-left:3px solid #10b981}
+.r-box{margin-top:10px;background:var(--correction-tint);border-radius:9px;padding:10px 12px;border-left:3px solid var(--correction)}
 .r-top{display:flex;align-items:center;gap:6px;margin-bottom:3px}
-.r-prof{font-size:11.5px;font-weight:700;color:#065f46}
+.r-prof{font-size:11.5px;font-weight:700;color:var(--correction-dark)}
 .r-time{font-size:10px;color:#6b9080;font-family:'DM Mono',monospace}
-.r-text{font-size:13px;color:#166534;line-height:1.4;white-space:pre-wrap}
+.r-text{font-size:13px;color:#215e3f;line-height:1.45;white-space:pre-wrap}
 
 .ans-form{margin-top:10px}
 .ans-form textarea{min-height:44px;font-size:13px}
@@ -80,33 +185,65 @@ label.f-label{font-size:11.5px;font-weight:700;color:#64748b;margin-bottom:5px;d
 
 /* ── Composeur Clavier / Dessin ── */
 .composer-tabs{display:flex;gap:6px;margin-bottom:8px}
-.composer-tab{padding:6px 12px;border-radius:8px;border:1.5px solid #e2e8f0;background:#fff;color:#64748b;font-weight:700;font-size:11.5px;cursor:pointer;font-family:'DM Sans',sans-serif}
-.composer-tab.active{background:#6366f1;color:#fff;border-color:#6366f1}
+.composer-tab{padding:6px 12px;border-radius:8px;border:1.5px solid var(--rule);background:#fff;color:var(--ink-soft);font-weight:700;font-size:11.5px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.composer-tab.active{background:var(--stylo);color:#fff;border-color:var(--stylo)}
 .draw-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
 .color-swatches{display:flex;gap:5px}
-.swatch{width:22px;height:22px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1.5px #e2e8f0;cursor:pointer;padding:0}
+.swatch{width:22px;height:22px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1.5px var(--rule);cursor:pointer;padding:0}
 .size-btns{display:flex;gap:4px}
-.size-btns button,.btn-mini{padding:5px 9px;border-radius:8px;border:1.5px solid #e2e8f0;background:#fff;color:#475569;font-size:11px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif}
-.size-btns button:hover,.btn-mini:hover{background:#f1f5f9}
-.draw-canvas{width:100%;height:220px;border-radius:12px;border:1.5px solid #e2e8f0;touch-action:none;background:#fff;display:block;cursor:crosshair}
-.q-dessin-img,.r-dessin-img{max-width:100%;border-radius:10px;margin-top:8px;border:1px solid #e2e8f0;display:block}
+.size-btns button,.btn-mini{padding:5px 9px;border-radius:8px;border:1.5px solid var(--rule);background:#fff;color:var(--ink-soft);font-size:11px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif}
+.size-btns button:hover,.btn-mini:hover{background:#f5efdd}
+.draw-canvas{width:100%;height:220px;border-radius:10px;border:1.5px solid var(--rule);touch-action:none;background:#fff;display:block;cursor:crosshair}
+.q-dessin-img,.r-dessin-img{max-width:100%;border-radius:9px;margin-top:8px;border:1px solid var(--rule);display:block}
 
-.empty{text-align:center;padding:30px 14px;color:#94a3b8;font-size:13px}
+/* ── Outils mathématiques : indice & puissance ── */
+.math-tools{display:flex;gap:6px;margin-top:6px}
+.math-tools .btn-mini.active{background:var(--stylo);color:#fff;border-color:var(--stylo)}
+.math-palette{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;padding:8px;background:#f5efdd;border-radius:9px;border:1.5px solid var(--rule)}
+.math-key{width:32px;height:32px;border-radius:7px;border:1.5px solid var(--rule);background:#fff;font-family:'DM Mono',monospace;font-size:14px;font-weight:600;cursor:pointer;color:var(--ink);display:flex;align-items:center;justify-content:center;padding:0}
+.math-key:hover{background:var(--stylo-tint);border-color:var(--stylo)}
+.math-key-close{color:var(--danger);font-weight:700;border-color:var(--danger-tint)}
+
+/* ── Enregistrement audio ── */
+.audio-rec{display:flex;align-items:center;gap:12px;padding:12px;background:#fff;border:1.5px solid var(--rule);border-radius:10px}
+.audio-rec-btn{width:46px;height:46px;border-radius:50%;border:none;background:var(--danger);color:#fff;font-size:19px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .12s}
+.audio-rec-btn:active{transform:scale(.94)}
+.audio-rec-btn.recording{animation:pulseRec 1.2s infinite}
+@keyframes pulseRec{0%{box-shadow:0 0 0 0 rgba(239,68,68,.5)}70%{box-shadow:0 0 0 11px rgba(239,68,68,0)}100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}}
+.audio-rec-status{font-size:12px;color:var(--ink-soft);flex:1;line-height:1.4}
+.audio-preview{margin-top:10px;display:none;align-items:center;gap:8px}
+.audio-preview audio{flex:1;height:36px}
+.q-audio,.r-audio{width:100%;height:36px;margin-top:8px;display:block}
+
+.empty{text-align:center;padding:30px 14px;color:#a8998a;font-size:13px}
 
 .fab-new{position:sticky;bottom:14px;display:flex;justify-content:center;margin-top:8px}
 
 /* ── Auth screens ── */
-.auth-box{max-width:420px;margin:40px auto 0}
-.center{text-align:center}
-.roster-hint{font-size:11.5px;color:#64748b;margin-top:6px}
+.auth-box{max-width:420px;margin:24px auto 0}
+.center{text-align:center;margin-top:10px}
+.roster-hint{font-size:11.5px;color:var(--ink-soft);margin-top:6px}
 
-@media(min-width:640px){.role-grid{grid-template-columns:1fr 1fr}}
+#screen{padding:0 18px}
+@media(min-width:640px){.role-grid{grid-template-columns:1fr 1fr 1fr}}
+@media(prefers-reduced-motion:reduce){.role-card,.btn{transition:none}}
 </style>
 </head>
 <body>
 <div class="wrap" id="app">
-  <h1>💬 Tableau d'échange</h1>
-  <div class="subtitle">Club Réussir Ensemble — Questions & réponses Professeurs / Élèves</div>
+  <div class="board-header">
+    <div class="board-inner">
+      <h1>Tableau d'échange</h1>
+      <div class="subtitle">CLUB RÉUSSIR ENSEMBLE — QUESTIONS &amp; RÉPONSES PROF / ÉLÈVES</div>
+      <div class="craies">
+        <span class="craie" style="background:#f6f2e6"></span>
+        <span class="craie" style="background:#f0c14b"></span>
+        <span class="craie" style="background:#e8877a"></span>
+        <span class="craie" style="background:#7fb8d8"></span>
+        <span class="craie" style="background:#8fc9a1"></span>
+      </div>
+    </div>
+  </div>
   <div id="screen"></div>
 </div>
 
@@ -161,9 +298,15 @@ function composerHtml(prefix, placeholder){
     <div class="composer-tabs">
       <button type="button" class="composer-tab active" data-composer="${prefix}" data-mode="texte" onclick="switchComposerMode('${prefix}','texte')">⌨️ Clavier</button>
       <button type="button" class="composer-tab" data-composer="${prefix}" data-mode="dessin" onclick="switchComposerMode('${prefix}','dessin')">✏️ Dessin libre</button>
+      <button type="button" class="composer-tab" data-composer="${prefix}" data-mode="audio" onclick="switchComposerMode('${prefix}','audio')">🎙️ Audio</button>
     </div>
     <div id="${prefix}-text-wrap">
       <textarea id="${prefix}-text" placeholder="${esc(placeholder)}"></textarea>
+      <div class="math-tools">
+        <button type="button" class="btn-mini" id="${prefix}-mathbtn-sup" onclick="toggleMathPalette('${prefix}','sup')">xⁿ Puissance</button>
+        <button type="button" class="btn-mini" id="${prefix}-mathbtn-sub" onclick="toggleMathPalette('${prefix}','sub')">xₙ Indice</button>
+      </div>
+      <div id="${prefix}-mathpalette" class="math-palette" style="display:none"></div>
     </div>
     <div id="${prefix}-draw-wrap" style="display:none">
       <div class="draw-toolbar">
@@ -180,17 +323,155 @@ function composerHtml(prefix, placeholder){
       </div>
       <canvas id="${prefix}-canvas" width="600" height="240" class="draw-canvas"></canvas>
     </div>
+    <div id="${prefix}-audio-wrap" style="display:none">
+      <div class="audio-rec">
+        <button type="button" class="audio-rec-btn" id="${prefix}-audio-btn" onclick="toggleAudioRecording('${prefix}')">🎤</button>
+        <span class="audio-rec-status" id="${prefix}-audio-status">Appuyez pour enregistrer un message vocal (60 s max)</span>
+      </div>
+      <div class="audio-preview" id="${prefix}-audio-preview"></div>
+    </div>
   `;
 }
 
 window.switchComposerMode = function(prefix, mode){
   const textWrap = document.getElementById(prefix+'-text-wrap');
   const drawWrap = document.getElementById(prefix+'-draw-wrap');
+  const audioWrap = document.getElementById(prefix+'-audio-wrap');
   if(textWrap) textWrap.style.display = mode==='texte' ? '' : 'none';
   if(drawWrap) drawWrap.style.display = mode==='dessin' ? '' : 'none';
+  if(audioWrap) audioWrap.style.display = mode==='audio' ? '' : 'none';
   document.querySelectorAll(`[data-composer="${prefix}"]`).forEach(b=>b.classList.toggle('active', b.dataset.mode===mode));
   if(mode==='dessin') initCanvas(prefix+'-canvas');
 };
+
+// ── Outils mathématiques : insertion d'exposants (puissance) et indices ──
+const MATH_SUP_MAP = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','+':'⁺','−':'⁻','n':'ⁿ','i':'ⁱ','x':'ˣ','(':'⁽',')':'⁾'};
+const MATH_SUB_MAP = {'0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉','+':'₊','−':'₋','n':'ₙ','x':'ₓ','a':'ₐ','e':'ₑ','(':'₍',')':'₎'};
+
+function insertAtCursor(fieldId, text){
+  const el = document.getElementById(fieldId);
+  if(!el) return;
+  const start = el.selectionStart!=null ? el.selectionStart : el.value.length;
+  const end = el.selectionEnd!=null ? el.selectionEnd : el.value.length;
+  const val = el.value;
+  el.value = val.slice(0,start) + text + val.slice(end);
+  const pos = start + text.length;
+  el.focus();
+  el.setSelectionRange(pos,pos);
+}
+
+window.toggleMathPalette = function(prefix, type){
+  const pal = document.getElementById(prefix+'-mathpalette');
+  if(!pal) return;
+  const alreadyOpenSame = pal.style.display!=='none' && pal.dataset.type===type;
+  const supBtn = document.getElementById(prefix+'-mathbtn-sup');
+  const subBtn = document.getElementById(prefix+'-mathbtn-sub');
+  if(alreadyOpenSame){
+    pal.style.display = 'none';
+    if(supBtn) supBtn.classList.remove('active');
+    if(subBtn) subBtn.classList.remove('active');
+    return;
+  }
+  const map = type==='sup' ? MATH_SUP_MAP : MATH_SUB_MAP;
+  pal.dataset.type = type;
+  pal.innerHTML = Object.keys(map).map(k=>
+    `<button type="button" class="math-key" title="${type==='sup'?'Puissance':'Indice'} ${esc(k)}" onclick="insertAtCursor('${prefix}-text','${map[k]}')">${map[k]}</button>`
+  ).join('') + `<button type="button" class="math-key math-key-close" title="Fermer" onclick="document.getElementById('${prefix}-mathpalette').style.display='none';document.getElementById('${prefix}-mathbtn-sup')&&document.getElementById('${prefix}-mathbtn-sup').classList.remove('active');document.getElementById('${prefix}-mathbtn-sub')&&document.getElementById('${prefix}-mathbtn-sub').classList.remove('active')">✕</button>`;
+  pal.style.display = 'flex';
+  if(supBtn) supBtn.classList.toggle('active', type==='sup');
+  if(subBtn) subBtn.classList.toggle('active', type==='sub');
+};
+
+// ── Enregistrement audio (message vocal) ──
+const audioStates = {};
+
+window.toggleAudioRecording = async function(prefix){
+  const st = audioStates[prefix] || (audioStates[prefix] = {});
+  if(st.recording){
+    try{ st.recorder.stop(); }catch(e){}
+    return;
+  }
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    alert("L'enregistrement audio n'est pas pris en charge par ce navigateur.");
+    return;
+  }
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({ audio:true });
+    st.stream = stream;
+    st.chunks = [];
+    const mimeType = (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported('audio/webm')) ? 'audio/webm' : '';
+    st.recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+    st.recorder.ondataavailable = e => { if(e.data && e.data.size>0) st.chunks.push(e.data); };
+    st.recorder.onstop = () => {
+      st.recording = false;
+      stream.getTracks().forEach(t=>t.stop());
+      if(st.timerInt){ clearInterval(st.timerInt); st.timerInt = null; }
+      const blob = new Blob(st.chunks, { type: (st.recorder && st.recorder.mimeType) || 'audio/webm' });
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        st.dataUrl = reader.result;
+        renderAudioPreview(prefix);
+        updateAudioBtn(prefix);
+      };
+      reader.readAsDataURL(blob);
+    };
+    st.recorder.start();
+    st.recording = true;
+    st.startedAt = Date.now();
+    updateAudioBtn(prefix);
+    st.timerInt = setInterval(()=>updateAudioTimer(prefix), 500);
+  }catch(e){
+    alert("Impossible d'accéder au microphone : " + (e && e.message ? e.message : e));
+  }
+};
+
+function updateAudioBtn(prefix){
+  const st = audioStates[prefix] || {};
+  const btn = document.getElementById(prefix+'-audio-btn');
+  const status = document.getElementById(prefix+'-audio-status');
+  if(!btn) return;
+  if(st.recording){
+    btn.classList.add('recording'); btn.textContent = '⏹️';
+    if(status) status.textContent = 'Enregistrement… (0 s) — touchez pour arrêter';
+  }else{
+    btn.classList.remove('recording'); btn.textContent = '🎤';
+    if(status) status.textContent = st.dataUrl ? '✅ Message vocal prêt (réécoutez ci-dessous)' : 'Appuyez pour enregistrer un message vocal (60 s max)';
+  }
+}
+
+function updateAudioTimer(prefix){
+  const st = audioStates[prefix];
+  if(!st || !st.recording) return;
+  const status = document.getElementById(prefix+'-audio-status');
+  const secs = Math.floor((Date.now()-st.startedAt)/1000);
+  if(status) status.textContent = `Enregistrement… (${secs} s) — touchez pour arrêter`;
+  if(secs >= 60){ try{ st.recorder.stop(); }catch(e){} }
+}
+
+function renderAudioPreview(prefix){
+  const box = document.getElementById(prefix+'-audio-preview');
+  if(!box) return;
+  const st = audioStates[prefix];
+  if(!st || !st.dataUrl){ box.style.display = 'none'; box.innerHTML = ''; return; }
+  box.style.display = 'flex';
+  box.innerHTML = `<audio controls src="${st.dataUrl}"></audio><button type="button" class="btn-mini" onclick="deleteAudioRecording('${prefix}')">🗑️ Supprimer</button>`;
+}
+
+window.deleteAudioRecording = function(prefix){
+  const st = audioStates[prefix];
+  if(st) st.dataUrl = null;
+  renderAudioPreview(prefix);
+  updateAudioBtn(prefix);
+};
+
+function audioHasContent(prefix){ const st = audioStates[prefix]; return !!(st && st.dataUrl); }
+function audioToDataURL(prefix){ const st = audioStates[prefix]; return st ? st.dataUrl : null; }
+function resetAudioState(prefix){
+  const st = audioStates[prefix];
+  if(st){ st.dataUrl = null; st.chunks = []; }
+  renderAudioPreview(prefix);
+  updateAudioBtn(prefix);
+}
 
 // ── Moteur de dessin à main libre (vectoriel, avec annuler/effacer) ──
 const canvasStates = {};
@@ -354,7 +635,7 @@ function renderEleveNom(classeId, classeData){
   screen(`
     <div class="auth-box">
       <div class="card">
-        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;margin-bottom:10px">🏫 ${esc(classeData.classeName)}</div>
+        <div style="font-family:'Fraunces',serif;font-weight:700;font-size:16px;margin-bottom:10px;color:var(--ink)">🏫 ${esc(classeData.classeName)}</div>
         <div class="field">
           <label class="f-label">Mon nom</label>
           <input type="text" id="el-nom-search" placeholder="Tapez votre nom..." oninput="filtrerRosterEleve('${classeId}')">
@@ -388,9 +669,9 @@ window.filtrerRosterEleve = function(classeId){
   if(!q){ box.innerHTML = ''; return; }
   const found = list.filter(e => (e.name+' '+(e.prenom||'')).toLowerCase().includes(q)).slice(0,8);
   box.innerHTML = found.length ? found.map(e=>`
-    <div style="padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px" onmouseover="this.style.background='#eef2ff'" onmouseout="this.style.background='transparent'" onclick="eleveValiderNomRoster('${classeId}','${esc(e.name).replace(/'/g,"\\'")}','${esc(e.prenom||'').replace(/'/g,"\\'")}')">
+    <div style="padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px" onmouseover="this.style.background='var(--stylo-tint)'" onmouseout="this.style.background='transparent'" onclick="eleveValiderNomRoster('${classeId}','${esc(e.name).replace(/'/g,"\\'")}','${esc(e.prenom||'').replace(/'/g,"\\'")}')">
       👤 ${esc(e.name)} ${esc(e.prenom||'')}
-    </div>`).join('') : `<div style="font-size:12px;color:#94a3b8;padding:6px">Aucun élève trouvé — utilisez la saisie libre ci-dessous.</div>`;
+    </div>`).join('') : `<div style="font-size:12px;color:var(--ink-soft);padding:6px">Aucun élève trouvé — utilisez la saisie libre ci-dessous.</div>`;
 };
 
 window.eleveValiderNomRoster = function(classeId, name, prenom){
@@ -436,7 +717,7 @@ function renderEleveBoard(s){
     <div id="el-board"></div>
   `);
   chargerMatieresDansSelect('el-matiere');
-  ecouterTableauClasse(s.classeId, list => renderBoardEleve(list));
+  ecouterTableauClasse(s.classeId, list => renderBoardEleve(list, s));
 }
 
 window.quitterSession = function(){
@@ -468,26 +749,28 @@ window.eleveEnvoyerQuestion = async function(){
   const matiere = document.getElementById('el-matiere').value;
   const question = (document.getElementById('el-q-text').value||'').trim();
   const dessin = canvasHasContent('el-q-canvas') ? canvasToDataURL('el-q-canvas') : null;
+  const audio = audioHasContent('el-q') ? audioToDataURL('el-q') : null;
   if(!matiere){ alert('Veuillez choisir une matière.'); return; }
-  if(!question && !dessin){ alert('Veuillez écrire votre question ou faire un dessin.'); return; }
+  if(!question && !dessin && !audio){ alert('Veuillez écrire votre question, faire un dessin ou enregistrer un message vocal.'); return; }
   try{
     await window.fbAddDoc(window.fbCollection(window.fbDB,'edtxTableau'), {
       classeId: s.classeId, classeName: s.classeName,
-      matiere, eleveNom: s.eleveNom, question: question||'', dessin: dessin||null,
+      matiere, eleveNom: s.eleveNom, question: question||'', dessin: dessin||null, audio: audio||null,
       createdAt: Date.now(), reponses: []
     });
     document.getElementById('el-q-text').value = '';
     document.getElementById('el-matiere').value = '';
     clearCanvas('el-q-canvas');
+    resetAudioState('el-q');
     switchComposerMode('el-q','texte');
   }catch(e){ alert('Erreur d\'envoi : ' + (e && e.message ? e.message : e)); }
 };
 
-function renderBoardEleve(list){
+function renderBoardEleve(list, s){
   const box = document.getElementById('el-board');
   if(!box) return;
   if(!list.length){ box.innerHTML = `<div class="empty">💬 Aucune question pour l'instant.<br>Soyez le premier à en poser une !</div>`; return; }
-  box.innerHTML = list.map(q=>renderQItem(q, {readonly:true})).join('');
+  box.innerHTML = list.map(q=>renderQItem(q, {readonly:true, eleve:s})).join('');
 }
 
 // ═══════════════ PROFESSEUR — connexion ═══════════════
@@ -581,11 +864,14 @@ function renderQItem(q, opts){
   const answered = reponses.length>0;
   const prof = opts.prof;
   const peutRepondre = !opts.readonly && prof && (prof.matieres||[]).includes(q.matiere) ;
+  const peutSupprimerEleve = opts.eleve && opts.eleve.role==='eleve' && opts.eleve.eleveNom === q.eleveNom;
+  const peutSupprimer = peutRepondre || peutSupprimerEleve;
   const reponsesHtml = reponses.map(r=>`
     <div class="r-box">
       <div class="r-top"><span class="r-prof">🧑‍🏫 ${esc(r.profNom)}</span><span class="r-time">${fmtTime(r.createdAt)}</span></div>
       ${r.texte ? `<div class="r-text">${esc(r.texte)}</div>` : ''}
       ${r.dessin ? `<img class="r-dessin-img" src="${r.dessin}" alt="Dessin de réponse">` : ''}
+      ${r.audio ? `<audio class="r-audio" controls src="${r.audio}"></audio>` : ''}
     </div>`).join('');
   let ansFormHtml = '';
   if(peutRepondre){
@@ -600,10 +886,11 @@ function renderQItem(q, opts){
   }
   return `
     <div class="q-item ${answered?'answered':''}">
-      <div class="q-top"><span class="q-mat">${esc(q.matiere)}</span><span class="q-time">${fmtTime(q.createdAt)}</span></div>
+      <div class="q-top"><span class="q-mat">${esc(q.matiere)}</span>${answered?'<span class="q-stamp">Répondu ✓</span>':''}<span class="q-time">${fmtTime(q.createdAt)}</span>${peutSupprimer?`<button type="button" class="q-del-btn" onclick="supprimerQuestion('${q.id}')" title="Supprimer cette question">🗑️</button>`:''}</div>
       <div class="q-eleve">🎒 ${esc(q.eleveNom)}</div>
       ${q.question ? `<div class="q-text">${esc(q.question)}</div>` : ''}
       ${q.dessin ? `<img class="q-dessin-img" src="${q.dessin}" alt="Dessin de la question">` : ''}
+      ${q.audio ? `<audio class="q-audio" controls src="${q.audio}"></audio>` : ''}
       ${reponsesHtml}
       ${ansFormHtml}
     </div>`;
@@ -615,15 +902,24 @@ window.profRepondre = async function(qId){
   const prefix = 'ans-'+qId;
   const texte = (document.getElementById(prefix+'-text').value||'').trim();
   const dessin = canvasHasContent(prefix+'-canvas') ? canvasToDataURL(prefix+'-canvas') : null;
-  if(!texte && !dessin){ alert('Veuillez écrire une réponse ou faire un dessin.'); return; }
+  const audio = audioHasContent(prefix) ? audioToDataURL(prefix) : null;
+  if(!texte && !dessin && !audio){ alert('Veuillez écrire une réponse, faire un dessin ou enregistrer un message vocal.'); return; }
   try{
     const ref = window.fbDoc(window.fbDB,'edtxTableau', qId);
     const snap = await window.fbGetDoc(ref);
     if(!snap.exists()) return;
     const reponses = snap.data().reponses || [];
-    reponses.push({ profNom: s.nom, profCode: s.code, texte: texte||'', dessin: dessin||null, createdAt: Date.now() });
+    reponses.push({ profNom: s.nom, profCode: s.code, texte: texte||'', dessin: dessin||null, audio: audio||null, createdAt: Date.now() });
     await window.fbUpdateDoc(ref, { reponses });
+    resetAudioState(prefix);
   }catch(e){ alert('Erreur : ' + (e && e.message ? e.message : e)); }
+};
+
+window.supprimerQuestion = async function(qId){
+  if(!confirm('Supprimer définitivement cette question (et ses réponses éventuelles) ?')) return;
+  try{
+    await window.fbDeleteDoc(window.fbDoc(window.fbDB,'edtxTableau', qId));
+  }catch(e){ alert('Erreur de suppression : ' + (e && e.message ? e.message : e)); }
 };
 
 // ═══════════════ Écoute temps réel du tableau d'une classe ═══════════════
@@ -664,7 +960,7 @@ function renderAdminPanel(){
       <button class="link-btn" onclick="renderRoleSelect()">← Retour</button>
     </div>
     <div class="card">
-      <div style="font-size:12.5px;color:#64748b;line-height:1.5">
+      <div style="font-size:12.5px;color:var(--ink-soft);line-height:1.5">
         Les classes affichées ci-dessous proviennent de « Emploi du temps » (onglet Groupes/Classes → 🔄 Synchroniser vers Espace Prof).
         Chaque élève peut recevoir un <strong>lien personnel</strong> (ouvre directement son tableau, sans rien saisir), ou vous pouvez diffuser un code unique pour toute la classe.
       </div>
@@ -701,8 +997,8 @@ async function chargerClassesAdmin(){
       <div class="card">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
           <div>
-            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:14px">${esc(c.name)}</div>
-            <div style="font-size:11.5px;color:#64748b">${c.eleves.length} élève(s)</div>
+            <div style="font-family:'Fraunces',serif;font-weight:700;font-size:15px;color:var(--ink)">${esc(c.name)}</div>
+            <div style="font-size:11.5px;color:var(--ink-soft)">${c.eleves.length} élève(s)</div>
           </div>
           ${c.code
             ? `<span class="who-badge" style="font-family:'DM Mono',monospace;font-size:15px">${esc(c.code)}</span>`
@@ -716,9 +1012,9 @@ async function chargerClassesAdmin(){
           <button class="btn btn-danger" onclick="regenererCodeClasse('${c.id}','${esc(c.name).replace(/'/g,"\\'")}')">🔄 Régénérer</button>
         </div>` : ''}
         <details style="margin-top:12px">
-          <summary style="cursor:pointer;font-size:12.5px;font-weight:700;color:#6366f1">🔗 Liens personnels par élève</summary>
+          <summary style="cursor:pointer;font-size:12.5px;font-weight:700;color:var(--stylo)">🔗 Liens personnels par élève</summary>
           <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
-            ${c.eleves.length ? c.eleves.map(e=>renderEleveTokenRow(c.id, c.name, e)).join('') : `<div style="font-size:12px;color:#94a3b8">Aucun élève dans cette classe.</div>`}
+            ${c.eleves.length ? c.eleves.map(e=>renderEleveTokenRow(c.id, c.name, e)).join('') : `<div style="font-size:12px;color:var(--ink-soft)">Aucun élève dans cette classe.</div>`}
           </div>
         </details>
       </div>
