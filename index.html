@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#6366f1">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tableau d'échange">
+<meta name="description" content="Tableau d'échange questions/réponses entre professeurs et élèves — Club Réussir Ensemble">
+<title>Tableau d'échange — Prof & Élèves</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f0f4f8;font-family:'DM Sans',sans-serif;min-height:100vh;padding:16px;color:#1a1f2e}
+h1{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:#1a1f2e;margin-bottom:2px}
+.subtitle{font-size:12.5px;color:#64748b;margin-bottom:16px}
+.wrap{max-width:720px;margin:0 auto}
+
+.card{background:#fff;border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.btn{padding:10px 16px;border-radius:10px;border:none;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn-primary{background:#6366f1;color:#fff}
+.btn-primary:hover{background:#4f52e0}
+.btn-green{background:#25d366;color:#fff}
+.btn-green:hover{background:#1ebe5c}
+.btn-ghost{background:#e0e7ff;color:#4338ca}
+.btn-ghost:hover{background:#c7d2fe}
+.btn-danger{background:#fee2e2;color:#ef4444}
+.btn-block{width:100%}
+.btn:active{opacity:.8}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+input[type=text],input[type=password],select,textarea{padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:13.5px;font-family:'DM Sans',sans-serif;outline:none;width:100%;background:#fff}
+input:focus,select:focus,textarea:focus{border-color:#6366f1}
+textarea{resize:vertical;min-height:70px}
+label.f-label{font-size:11.5px;font-weight:700;color:#64748b;margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.3px}
+.field{margin-bottom:12px}
+
+/* ── Écran de rôle ── */
+.role-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.role-card{background:#fff;border-radius:16px;padding:22px 18px;box-shadow:0 1px 4px rgba(0,0,0,.07);cursor:pointer;display:flex;align-items:center;gap:14px;border:2px solid transparent;transition:all .15s}
+.role-card:hover{border-color:#6366f1;transform:translateY(-1px)}
+.role-emoji{font-size:30px;width:52px;height:52px;border-radius:14px;background:#eef2ff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.role-title{font-family:'Syne',sans-serif;font-size:15.5px;font-weight:800;color:#1a1f2e}
+.role-desc{font-size:12px;color:#64748b;margin-top:2px}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px;flex-wrap:wrap}
+.who-badge{font-size:11px;background:#eef2ff;color:#6366f1;border-radius:20px;padding:5px 12px;font-weight:700}
+.link-btn{background:none;border:none;color:#6366f1;font-weight:700;font-size:12.5px;cursor:pointer;text-decoration:underline}
+
+/* ── Onglets classes ── */
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px}
+.tab-chip{flex-shrink:0;padding:9px 16px;border-radius:11px;border:none;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12.5px;background:#fff;color:#64748b;box-shadow:0 1px 4px rgba(0,0,0,.07);white-space:nowrap}
+.tab-chip.active{background:#6366f1;color:#fff}
+
+/* ── Fil de questions ── */
+.q-item{background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-left:4px solid #6366f1}
+.q-item.answered{border-left-color:#10b981}
+.q-item.locked{opacity:.6}
+.q-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.q-mat{font-size:10.5px;font-weight:700;background:#eef2ff;color:#4338ca;border-radius:6px;padding:2px 8px}
+.q-time{font-size:10.5px;color:#94a3b8;font-family:'DM Mono',monospace}
+.q-eleve{font-size:12px;font-weight:700;color:#1a1f2e;margin-bottom:4px}
+.q-text{font-size:13.5px;color:#334155;line-height:1.45;white-space:pre-wrap}
+.q-lock-note{font-size:11px;color:#94a3b8;margin-top:8px;font-style:italic}
+
+.r-box{margin-top:10px;background:#f0fdf4;border-radius:10px;padding:10px 12px;border-left:3px solid #10b981}
+.r-top{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.r-prof{font-size:11.5px;font-weight:700;color:#065f46}
+.r-time{font-size:10px;color:#6b9080;font-family:'DM Mono',monospace}
+.r-text{font-size:13px;color:#166534;line-height:1.4;white-space:pre-wrap}
+
+.ans-form{margin-top:10px}
+.ans-form textarea{min-height:44px;font-size:13px}
+.ans-form .composer-send{margin-top:8px}
+
+/* ── Composeur Clavier / Dessin ── */
+.composer-tabs{display:flex;gap:6px;margin-bottom:8px}
+.composer-tab{padding:6px 12px;border-radius:8px;border:1.5px solid #e2e8f0;background:#fff;color:#64748b;font-weight:700;font-size:11.5px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.composer-tab.active{background:#6366f1;color:#fff;border-color:#6366f1}
+.draw-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.color-swatches{display:flex;gap:5px}
+.swatch{width:22px;height:22px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1.5px #e2e8f0;cursor:pointer;padding:0}
+.size-btns{display:flex;gap:4px}
+.size-btns button,.btn-mini{padding:5px 9px;border-radius:8px;border:1.5px solid #e2e8f0;background:#fff;color:#475569;font-size:11px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif}
+.size-btns button:hover,.btn-mini:hover{background:#f1f5f9}
+.draw-canvas{width:100%;height:220px;border-radius:12px;border:1.5px solid #e2e8f0;touch-action:none;background:#fff;display:block;cursor:crosshair}
+.q-dessin-img,.r-dessin-img{max-width:100%;border-radius:10px;margin-top:8px;border:1px solid #e2e8f0;display:block}
+
+.empty{text-align:center;padding:30px 14px;color:#94a3b8;font-size:13px}
+
+.fab-new{position:sticky;bottom:14px;display:flex;justify-content:center;margin-top:8px}
+
+/* ── Auth screens ── */
+.auth-box{max-width:420px;margin:40px auto 0}
+.center{text-align:center}
+.roster-hint{font-size:11.5px;color:#64748b;margin-top:6px}
+
+@media(min-width:640px){.role-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <h1>💬 Tableau d'échange</h1>
+  <div class="subtitle">Club Réussir Ensemble — Questions & réponses Professeurs / Élèves</div>
+  <div id="screen"></div>
+</div>
+
+<!-- ══ FIREBASE SDK ══ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc, collection, getDocs, onSnapshot,
+         addDoc, query, where, orderBy, deleteDoc, updateDoc
+       } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBYeYPOptN2wEak_Ctcr4a8t5qXpj4riLE",
+  authDomain: "emploi-temps.firebaseapp.com",
+  projectId: "emploi-temps",
+  storageBucket: "emploi-temps.firebasestorage.app",
+  messagingSenderId: "665985283894",
+  appId: "1:665985283894:web:b0c4cb14824bb8fed9a597"
+};
+const fbApp = initializeApp(firebaseConfig);
+const fbDB  = getFirestore(fbApp);
+
+window.fbDB = fbDB;
+window.fbDoc = doc; window.fbSetDoc = setDoc; window.fbGetDoc = getDoc;
+window.fbCollection = collection; window.fbGetDocs = getDocs; window.fbOnSnapshot = onSnapshot;
+window.fbAddDoc = addDoc; window.fbQuery = query; window.fbWhere = where; window.fbOrderBy = orderBy;
+window.fbDeleteDoc = deleteDoc; window.fbUpdateDoc = updateDoc;
+window.dispatchEvent(new Event('fb-ready'));
+</script>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// TABLEAU D'ÉCHANGE — Prof & Élèves (même projet Firebase que Emploi du temps)
+// Collections utilisées :
+//   - profs           (lecture seule, synchronisée depuis Emploi du temps)  {nom, matieres[]}
+//   - edtxRoster       (lecture seule, synchronisée depuis Emploi du temps)  {name, eleves:[{id,name,prenom}]}
+//   - edtxTableauCodes (créée ici, par l'admin)  {code, classeName, createdAt}  — doc id = id de la classe (edtxRoster)
+//   - edtxTableau      (créée ici)  {classeId, classeName, matiere, eleveNom, question, createdAt, reponses:[{profNom,profCode,texte,createdAt}]}
+// ═══════════════════════════════════════════════════════════════
+const ADMIN_PASS = 'reussir2024'; // mot de passe admin — à changer si besoin
+
+let fbReady = false;
+window.addEventListener('fb-ready', ()=>{ fbReady = true; boot(); });
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmtTime(ts){ if(!ts) return ''; const d = new Date(ts); return d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'}) + ' ' + d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); }
+function qs(k){ return new URLSearchParams(location.search).get(k); }
+function screen(html){ document.getElementById('screen').innerHTML = html; }
+
+// ═══════════════ Composeur Clavier / Dessin (réutilisable) ═══════════════
+function composerHtml(prefix, placeholder){
+  return `
+    <div class="composer-tabs">
+      <button type="button" class="composer-tab active" data-composer="${prefix}" data-mode="texte" onclick="switchComposerMode('${prefix}','texte')">⌨️ Clavier</button>
+      <button type="button" class="composer-tab" data-composer="${prefix}" data-mode="dessin" onclick="switchComposerMode('${prefix}','dessin')">✏️ Dessin libre</button>
+    </div>
+    <div id="${prefix}-text-wrap">
+      <textarea id="${prefix}-text" placeholder="${esc(placeholder)}"></textarea>
+    </div>
+    <div id="${prefix}-draw-wrap" style="display:none">
+      <div class="draw-toolbar">
+        <div class="color-swatches">
+          ${['#1a1f2e','#ef4444','#2563eb','#10b981','#f59e0b'].map((c,i)=>`<button type="button" class="swatch" style="background:${c}${i===0?';box-shadow:0 0 0 2px #6366f1':''}" onclick="setCanvasColor('${prefix}-canvas','${c}')" title="Couleur"></button>`).join('')}
+        </div>
+        <div class="size-btns">
+          <button type="button" onclick="setCanvasSize('${prefix}-canvas',2)">Fin</button>
+          <button type="button" onclick="setCanvasSize('${prefix}-canvas',5)">Moyen</button>
+          <button type="button" onclick="setCanvasSize('${prefix}-canvas',10)">Épais</button>
+        </div>
+        <button type="button" class="btn-mini" onclick="undoCanvas('${prefix}-canvas')">↩️ Annuler</button>
+        <button type="button" class="btn-mini" onclick="clearCanvas('${prefix}-canvas')">🗑️ Effacer</button>
+      </div>
+      <canvas id="${prefix}-canvas" width="600" height="240" class="draw-canvas"></canvas>
+    </div>
+  `;
+}
+
+window.switchComposerMode = function(prefix, mode){
+  const textWrap = document.getElementById(prefix+'-text-wrap');
+  const drawWrap = document.getElementById(prefix+'-draw-wrap');
+  if(textWrap) textWrap.style.display = mode==='texte' ? '' : 'none';
+  if(drawWrap) drawWrap.style.display = mode==='dessin' ? '' : 'none';
+  document.querySelectorAll(`[data-composer="${prefix}"]`).forEach(b=>b.classList.toggle('active', b.dataset.mode===mode));
+  if(mode==='dessin') initCanvas(prefix+'-canvas');
+};
+
+// ── Moteur de dessin à main libre (vectoriel, avec annuler/effacer) ──
+const canvasStates = {};
+
+function ptFromEvent(canvas, e){
+  const r = canvas.getBoundingClientRect();
+  return {
+    x: (e.clientX - r.left) * (canvas.width / r.width),
+    y: (e.clientY - r.top) * (canvas.height / r.height)
+  };
+}
+
+function redrawCanvas(canvasId){
+  const st = canvasStates[canvasId];
+  if(!st) return;
+  const ctx = st.ctx, canvas = st.canvas;
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  st.strokes.forEach(s=>{
+    if(s.points.length < 2){
+      ctx.beginPath();
+      ctx.arc(s.points[0].x, s.points[0].y, s.size/2, 0, Math.PI*2);
+      ctx.fillStyle = s.color;
+      ctx.fill();
+      return;
+    }
+    ctx.beginPath();
+    ctx.moveTo(s.points[0].x, s.points[0].y);
+    for(let i=1;i<s.points.length;i++) ctx.lineTo(s.points[i].x, s.points[i].y);
+    ctx.strokeStyle = s.color;
+    ctx.lineWidth = s.size;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+  });
+}
+
+function initCanvas(canvasId){
+  const canvas = document.getElementById(canvasId);
+  if(!canvas || canvas.__inited) return;
+  canvas.__inited = true;
+  const ctx = canvas.getContext('2d');
+  const st = { canvas, ctx, strokes: [], current: null, color: '#1a1f2e', size: 3 };
+  canvasStates[canvasId] = st;
+  redrawCanvas(canvasId);
+
+  function down(e){
+    e.preventDefault();
+    try{ canvas.setPointerCapture(e.pointerId); }catch(err){}
+    const p = ptFromEvent(canvas, e);
+    st.current = { color: st.color, size: st.size, points: [p] };
+    st.strokes.push(st.current);
+    redrawCanvas(canvasId);
+  }
+  function move(e){
+    if(!st.current) return;
+    e.preventDefault();
+    st.current.points.push(ptFromEvent(canvas, e));
+    redrawCanvas(canvasId);
+  }
+  function up(){ st.current = null; }
+  canvas.addEventListener('pointerdown', down);
+  canvas.addEventListener('pointermove', move);
+  canvas.addEventListener('pointerup', up);
+  canvas.addEventListener('pointerleave', up);
+  canvas.addEventListener('pointercancel', up);
+}
+
+window.setCanvasColor = function(canvasId, color){ const st = canvasStates[canvasId]; if(st) st.color = color; };
+window.setCanvasSize  = function(canvasId, size){ const st = canvasStates[canvasId]; if(st) st.size = size; };
+window.undoCanvas = function(canvasId){ const st = canvasStates[canvasId]; if(st && st.strokes.length){ st.strokes.pop(); redrawCanvas(canvasId); } };
+window.clearCanvas = function(canvasId){ const st = canvasStates[canvasId]; if(st){ st.strokes = []; redrawCanvas(canvasId); } };
+function canvasHasContent(canvasId){ const st = canvasStates[canvasId]; return !!(st && st.strokes.length); }
+function canvasToDataURL(canvasId){ const st = canvasStates[canvasId]; return st ? st.canvas.toDataURL('image/jpeg', 0.75) : null; }
+
+// ── État session (mémorisé localement sur l'appareil) ──
+const SS_KEY = 'tableauEchange_session';
+function getSession(){ try{ return JSON.parse(localStorage.getItem(SS_KEY)||'null'); }catch(e){ return null; } }
+function setSession(s){ localStorage.setItem(SS_KEY, JSON.stringify(s)); }
+function clearSession(){ localStorage.removeItem(SS_KEY); }
+
+let unsubBoard = null;
+let unsubProfsList = null;
+let profsCache = [];
+let rosterCache = {}; // classeId -> {name, eleves}
+
+function boot(){
+  const eleveToken = qs('eleve');
+  if(eleveToken){ ouvrirLienPersonnelEleve(eleveToken); return; }
+  const s = getSession();
+  const codeParam = qs('classe');
+  if(s && s.role==='eleve') return renderEleveBoard(s);
+  if(s && s.role==='prof') return renderProfBoard(s);
+  if(codeParam) return renderEleveLogin(codeParam);
+  renderRoleSelect();
+}
+
+async function ouvrirLienPersonnelEleve(token){
+  screen(`<div class="empty">Connexion en cours…</div>`);
+  try{
+    const snap = await window.fbGetDoc(window.fbDoc(window.fbDB,'edtxTableauEleves', token));
+    if(!snap.exists()){ alert('Ce lien personnel est invalide ou a été régénéré.'); renderRoleSelect(); return; }
+    const d = snap.data();
+    startEleveSession(d.classeId, d.eleveNom, d.classeName);
+  }catch(e){ alert('Erreur : ' + (e && e.message ? e.message : e)); renderRoleSelect(); }
+}
+
+// ═══════════════ ÉCRAN 1 — Choix du rôle ═══════════════
+function renderRoleSelect(){
+  screen(`
+    <div class="role-grid">
+      <div class="role-card" onclick="showEleveEntry()">
+        <div class="role-emoji">🎒</div>
+        <div><div class="role-title">Je suis Élève</div><div class="role-desc">Poser une question à mes professeurs</div></div>
+      </div>
+      <div class="role-card" onclick="showProfEntry()">
+        <div class="role-emoji">🧑‍🏫</div>
+        <div><div class="role-title">Je suis Professeur</div><div class="role-desc">Répondre aux questions de mes classes</div></div>
+      </div>
+      <div class="role-card" onclick="showAdminEntry()">
+        <div class="role-emoji">🛠️</div>
+        <div><div class="role-title">Administration</div><div class="role-desc">Gérer les codes d'accès des classes</div></div>
+      </div>
+    </div>
+  `);
+}
+window.showEleveEntry = function(){ renderEleveLogin(); };
+window.showProfEntry  = function(){ renderProfLogin(); };
+window.showAdminEntry = function(){ renderAdminLogin(); };
+
+// ═══════════════ ÉLÈVE — connexion ═══════════════
+function renderEleveLogin(prefillCode){
+  screen(`
+    <div class="auth-box">
+      <div class="card">
+        <div class="field">
+          <label class="f-label">Code de ma classe</label>
+          <input type="text" id="el-code" placeholder="Ex : 482913" value="${esc(prefillCode||'')}" style="text-align:center;font-family:'DM Mono',monospace;font-size:18px;letter-spacing:2px">
+          <div class="roster-hint">Ce code vous a été transmis par votre professeur ou l'administration.</div>
+        </div>
+        <button class="btn btn-primary btn-block" onclick="eleveValiderCode()">Continuer</button>
+      </div>
+      <div class="center"><button class="link-btn" onclick="renderRoleSelect()">← Retour</button></div>
+    </div>
+  `);
+}
+
+window.eleveValiderCode = async function(){
+  const code = (document.getElementById('el-code').value||'').trim();
+  if(!code){ alert('Veuillez saisir le code de votre classe.'); return; }
+  if(!fbReady){ alert('Connexion en cours, réessayez dans un instant.'); return; }
+  try{
+    const snap = await window.fbGetDocs(window.fbQuery(window.fbCollection(window.fbDB,'edtxTableauCodes'), window.fbWhere('code','==',code)));
+    if(snap.empty){ alert('Code invalide. Vérifiez auprès de votre professeur.'); return; }
+    const d = snap.docs[0];
+    renderEleveNom(d.id, d.data());
+  }catch(e){ alert('Erreur : ' + (e && e.message ? e.message : e)); }
+};
+
+function renderEleveNom(classeId, classeData){
+  screen(`
+    <div class="auth-box">
+      <div class="card">
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;margin-bottom:10px">🏫 ${esc(classeData.classeName)}</div>
+        <div class="field">
+          <label class="f-label">Mon nom</label>
+          <input type="text" id="el-nom-search" placeholder="Tapez votre nom..." oninput="filtrerRosterEleve('${classeId}')">
+          <div id="el-roster-list" style="margin-top:8px;max-height:180px;overflow-y:auto"></div>
+        </div>
+        <div class="field">
+          <label class="f-label">Ou saisissez librement</label>
+          <input type="text" id="el-nom-libre" placeholder="Prénom Nom">
+          <button class="btn btn-ghost btn-block" style="margin-top:6px" onclick="eleveValiderNomLibre('${classeId}')">Continuer avec ce nom</button>
+        </div>
+      </div>
+      <div class="center"><button class="link-btn" onclick="renderRoleSelect()">← Retour</button></div>
+    </div>
+  `);
+  loadRosterForClasse(classeId).then(()=>filtrerRosterEleve(classeId));
+}
+
+async function loadRosterForClasse(classeId){
+  if(rosterCache[classeId]) return rosterCache[classeId];
+  try{
+    const snap = await window.fbGetDoc(window.fbDoc(window.fbDB,'edtxRoster',classeId));
+    rosterCache[classeId] = snap.exists() ? (snap.data().eleves||[]) : [];
+  }catch(e){ rosterCache[classeId] = []; }
+  return rosterCache[classeId];
+}
+
+window.filtrerRosterEleve = function(classeId){
+  const q = (document.getElementById('el-nom-search').value||'').toLowerCase().trim();
+  const list = rosterCache[classeId] || [];
+  const box = document.getElementById('el-roster-list');
+  if(!q){ box.innerHTML = ''; return; }
+  const found = list.filter(e => (e.name+' '+(e.prenom||'')).toLowerCase().includes(q)).slice(0,8);
+  box.innerHTML = found.length ? found.map(e=>`
+    <div style="padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px" onmouseover="this.style.background='#eef2ff'" onmouseout="this.style.background='transparent'" onclick="eleveValiderNomRoster('${classeId}','${esc(e.name).replace(/'/g,"\\'")}','${esc(e.prenom||'').replace(/'/g,"\\'")}')">
+      👤 ${esc(e.name)} ${esc(e.prenom||'')}
+    </div>`).join('') : `<div style="font-size:12px;color:#94a3b8;padding:6px">Aucun élève trouvé — utilisez la saisie libre ci-dessous.</div>`;
+};
+
+window.eleveValiderNomRoster = function(classeId, name, prenom){
+  const full = (name + ' ' + (prenom||'')).trim();
+  startEleveSession(classeId, full);
+};
+window.eleveValiderNomLibre = function(classeId){
+  const v = (document.getElementById('el-nom-libre').value||'').trim();
+  if(!v){ alert('Veuillez saisir votre nom.'); return; }
+  startEleveSession(classeId, v);
+};
+
+async function startEleveSession(classeId, eleveNom, classeNameOverride){
+  let classeName = classeNameOverride || classeId;
+  if(!classeNameOverride){
+    try{
+      const cSnap = await window.fbGetDoc(window.fbDoc(window.fbDB,'edtxTableauCodes',classeId));
+      if(cSnap.exists()) classeName = cSnap.data().classeName;
+    }catch(e){}
+  }
+  const s = { role:'eleve', classeId, classeName, eleveNom };
+  setSession(s);
+  renderEleveBoard(s);
+}
+
+// ═══════════════ ÉLÈVE — tableau ═══════════════
+function renderEleveBoard(s){
+  screen(`
+    <div class="topbar">
+      <span class="who-badge">🎒 ${esc(s.eleveNom)} · ${esc(s.classeName)}</span>
+      <button class="link-btn" onclick="quitterSession()">Changer d'élève</button>
+    </div>
+    <div class="card">
+      <label class="f-label">Poser une question</label>
+      <div class="field" style="margin-top:8px">
+        <select id="el-matiere"><option value="">Choisir une matière...</option></select>
+      </div>
+      <div class="field">
+        ${composerHtml('el-q','Écrivez votre question ici...')}
+      </div>
+      <button class="btn btn-primary btn-block" onclick="eleveEnvoyerQuestion()">📤 Envoyer la question</button>
+    </div>
+    <div id="el-board"></div>
+  `);
+  chargerMatieresDansSelect('el-matiere');
+  ecouterTableauClasse(s.classeId, list => renderBoardEleve(list));
+}
+
+window.quitterSession = function(){
+  clearSession();
+  if(unsubBoard){ unsubBoard(); unsubBoard=null; }
+  if(unsubProfsList){ unsubProfsList(); unsubProfsList=null; }
+  if(qs('eleve') || qs('classe')){ location.href = location.pathname; return; }
+  renderRoleSelect();
+};
+
+function chargerMatieresDansSelect(selectId){
+  if(unsubProfsList) unsubProfsList();
+  unsubProfsList = window.fbOnSnapshot(window.fbCollection(window.fbDB,'profs'), snap=>{
+    const matieresSet = new Set();
+    snap.docs.forEach(d=>{ (d.data().matieres||[]).forEach(m=>matieresSet.add(m)); });
+    profsCache = snap.docs.map(d=>({ code:d.id, ...d.data() }));
+    const sel = document.getElementById(selectId);
+    if(!sel) return;
+    const current = sel.value;
+    const matieres = [...matieresSet].sort((a,b)=>a.localeCompare(b));
+    sel.innerHTML = '<option value="">Choisir une matière...</option>' + matieres.map(m=>`<option value="${esc(m)}">${esc(m)}</option>`).join('');
+    if(matieres.includes(current)) sel.value = current;
+  }, err=>console.warn('profs listener error', err));
+}
+
+window.eleveEnvoyerQuestion = async function(){
+  const s = getSession();
+  if(!s || s.role!=='eleve') return;
+  const matiere = document.getElementById('el-matiere').value;
+  const question = (document.getElementById('el-q-text').value||'').trim();
+  const dessin = canvasHasContent('el-q-canvas') ? canvasToDataURL('el-q-canvas') : null;
+  if(!matiere){ alert('Veuillez choisir une matière.'); return; }
+  if(!question && !dessin){ alert('Veuillez écrire votre question ou faire un dessin.'); return; }
+  try{
+    await window.fbAddDoc(window.fbCollection(window.fbDB,'edtxTableau'), {
+      classeId: s.classeId, classeName: s.classeName,
+      matiere, eleveNom: s.eleveNom, question: question||'', dessin: dessin||null,
+      createdAt: Date.now(), reponses: []
+    });
+    document.getElementById('el-q-text').value = '';
+    document.getElementById('el-matiere').value = '';
+    clearCanvas('el-q-canvas');
+    switchComposerMode('el-q','texte');
+  }catch(e){ alert('Erreur d\'envoi : ' + (e && e.message ? e.message : e)); }
+};
+
+function renderBoardEleve(list){
+  const box = document.getElementById('el-board');
+  if(!box) return;
+  if(!list.length){ box.innerHTML = `<div class="empty">💬 Aucune question pour l'instant.<br>Soyez le premier à en poser une !</div>`; return; }
+  box.innerHTML = list.map(q=>renderQItem(q, {readonly:true})).join('');
+}
+
+// ═══════════════ PROFESSEUR — connexion ═══════════════
+function renderProfLogin(){
+  screen(`
+    <div class="auth-box">
+      <div class="card">
+        <div class="field">
+          <label class="f-label">Mon code professeur</label>
+          <input type="text" id="pr-code" placeholder="Code reçu par WhatsApp/e-mail" style="text-align:center;font-family:'DM Mono',monospace;font-size:18px;letter-spacing:2px">
+        </div>
+        <button class="btn btn-primary btn-block" onclick="profValiderCode()">Continuer</button>
+      </div>
+      <div class="center"><button class="link-btn" onclick="renderRoleSelect()">← Retour</button></div>
+    </div>
+  `);
+}
+
+window.profValiderCode = async function(){
+  const code = (document.getElementById('pr-code').value||'').trim();
+  if(!code){ alert('Veuillez saisir votre code.'); return; }
+  if(!fbReady){ alert('Connexion en cours, réessayez dans un instant.'); return; }
+  try{
+    const snap = await window.fbGetDoc(window.fbDoc(window.fbDB,'profs',code));
+    if(!snap.exists()){ alert('Code invalide.'); return; }
+    const data = snap.data();
+    const s = { role:'prof', code, nom:data.nom, matieres:data.matieres||[] };
+    setSession(s);
+    renderProfBoard(s);
+  }catch(e){ alert('Erreur : ' + (e && e.message ? e.message : e)); }
+};
+
+// ═══════════════ PROFESSEUR — tableau (onglets par classe) ═══════════════
+let profClasses = [];
+let profActiveClasse = null;
+
+function renderProfBoard(s){
+  screen(`
+    <div class="topbar">
+      <span class="who-badge">🧑‍🏫 ${esc(s.nom)} · ${(s.matieres||[]).map(esc).join(', ')}</span>
+      <button class="link-btn" onclick="quitterSession()">Se déconnecter</button>
+    </div>
+    <div id="pr-tabs" class="tabs"></div>
+    <div id="pr-board"></div>
+  `);
+  chargerClassesPourProf(s);
+}
+
+async function chargerClassesPourProf(s){
+  try{
+    const snap = await window.fbGetDocs(window.fbCollection(window.fbDB,'edtxTableauCodes'));
+    profClasses = snap.docs.map(d=>({ id:d.id, ...d.data() })).sort((a,b)=>(a.classeName||'').localeCompare(b.classeName||''));
+  }catch(e){ profClasses = []; }
+  if(!profClasses.length){
+    document.getElementById('pr-board').innerHTML = `<div class="empty">🏫 Aucune classe n'a encore été configurée par l'administration.</div>`;
+    return;
+  }
+  profActiveClasse = profClasses[0].id;
+  renderProfTabs();
+  ouvrirClasseProf(profActiveClasse, s);
+}
+
+function renderProfTabs(){
+  const box = document.getElementById('pr-tabs');
+  box.innerHTML = profClasses.map(c=>`
+    <button class="tab-chip ${c.id===profActiveClasse?'active':''}" onclick="profChangerClasse('${c.id}')">${esc(c.classeName)}</button>
+  `).join('');
+}
+
+window.profChangerClasse = function(classeId){
+  profActiveClasse = classeId;
+  renderProfTabs();
+  ouvrirClasseProf(classeId, getSession());
+};
+
+function ouvrirClasseProf(classeId, s){
+  document.getElementById('pr-board').innerHTML = '<div class="empty">Chargement…</div>';
+  ecouterTableauClasse(classeId, list => renderBoardProf(list, s));
+}
+
+function renderBoardProf(list, s){
+  const box = document.getElementById('pr-board');
+  if(!box) return;
+  if(!list.length){ box.innerHTML = `<div class="empty">💬 Aucune question dans cette classe pour l'instant.</div>`; return; }
+  box.innerHTML = list.map(q=>renderQItem(q, {readonly:false, prof:s})).join('');
+}
+
+// ═══════════════ Rendu d'une question (commun élève/prof) ═══════════════
+function renderQItem(q, opts){
+  const reponses = q.reponses || [];
+  const answered = reponses.length>0;
+  const prof = opts.prof;
+  const peutRepondre = !opts.readonly && prof && (prof.matieres||[]).includes(q.matiere) ;
+  const reponsesHtml = reponses.map(r=>`
+    <div class="r-box">
+      <div class="r-top"><span class="r-prof">🧑‍🏫 ${esc(r.profNom)}</span><span class="r-time">${fmtTime(r.createdAt)}</span></div>
+      ${r.texte ? `<div class="r-text">${esc(r.texte)}</div>` : ''}
+      ${r.dessin ? `<img class="r-dessin-img" src="${r.dessin}" alt="Dessin de réponse">` : ''}
+    </div>`).join('');
+  let ansFormHtml = '';
+  if(peutRepondre){
+    const ansPrefix = 'ans-'+q.id;
+    ansFormHtml = `
+      <div class="ans-form">
+        ${composerHtml(ansPrefix,'Votre réponse...')}
+        <button class="btn btn-primary btn-block composer-send" onclick="profRepondre('${q.id}')">Répondre</button>
+      </div>`;
+  } else if(!opts.readonly && !answered){
+    ansFormHtml = `<div class="q-lock-note">🔒 Réservé à un professeur de ${esc(q.matiere)}.</div>`;
+  }
+  return `
+    <div class="q-item ${answered?'answered':''}">
+      <div class="q-top"><span class="q-mat">${esc(q.matiere)}</span><span class="q-time">${fmtTime(q.createdAt)}</span></div>
+      <div class="q-eleve">🎒 ${esc(q.eleveNom)}</div>
+      ${q.question ? `<div class="q-text">${esc(q.question)}</div>` : ''}
+      ${q.dessin ? `<img class="q-dessin-img" src="${q.dessin}" alt="Dessin de la question">` : ''}
+      ${reponsesHtml}
+      ${ansFormHtml}
+    </div>`;
+}
+
+window.profRepondre = async function(qId){
+  const s = getSession();
+  if(!s || s.role!=='prof') return;
+  const prefix = 'ans-'+qId;
+  const texte = (document.getElementById(prefix+'-text').value||'').trim();
+  const dessin = canvasHasContent(prefix+'-canvas') ? canvasToDataURL(prefix+'-canvas') : null;
+  if(!texte && !dessin){ alert('Veuillez écrire une réponse ou faire un dessin.'); return; }
+  try{
+    const ref = window.fbDoc(window.fbDB,'edtxTableau', qId);
+    const snap = await window.fbGetDoc(ref);
+    if(!snap.exists()) return;
+    const reponses = snap.data().reponses || [];
+    reponses.push({ profNom: s.nom, profCode: s.code, texte: texte||'', dessin: dessin||null, createdAt: Date.now() });
+    await window.fbUpdateDoc(ref, { reponses });
+  }catch(e){ alert('Erreur : ' + (e && e.message ? e.message : e)); }
+};
+
+// ═══════════════ Écoute temps réel du tableau d'une classe ═══════════════
+function ecouterTableauClasse(classeId, cb){
+  if(unsubBoard) unsubBoard();
+  const qy = window.fbQuery(window.fbCollection(window.fbDB,'edtxTableau'), window.fbWhere('classeId','==',classeId));
+  unsubBoard = window.fbOnSnapshot(qy, snap=>{
+    const list = snap.docs.map(d=>({ id:d.id, ...d.data() })).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+    cb(list);
+  }, err=>console.warn('tableau listener error', err));
+}
+
+// ═══════════════ ADMIN — gestion des codes de classe ═══════════════
+function renderAdminLogin(){
+  screen(`
+    <div class="auth-box">
+      <div class="card">
+        <div class="field">
+          <label class="f-label">Mot de passe administrateur</label>
+          <input type="password" id="ad-pass" placeholder="••••••••">
+        </div>
+        <button class="btn btn-primary btn-block" onclick="adminValider()">Entrer</button>
+      </div>
+      <div class="center"><button class="link-btn" onclick="renderRoleSelect()">← Retour</button></div>
+    </div>
+  `);
+}
+window.adminValider = function(){
+  const p = document.getElementById('ad-pass').value||'';
+  if(p !== ADMIN_PASS){ alert('Mot de passe incorrect.'); return; }
+  renderAdminPanel();
+};
+
+function renderAdminPanel(){
+  screen(`
+    <div class="topbar">
+      <span class="who-badge">🛠️ Administration</span>
+      <button class="link-btn" onclick="renderRoleSelect()">← Retour</button>
+    </div>
+    <div class="card">
+      <div style="font-size:12.5px;color:#64748b;line-height:1.5">
+        Les classes affichées ci-dessous proviennent de « Emploi du temps » (onglet Groupes/Classes → 🔄 Synchroniser vers Espace Prof).
+        Chaque élève peut recevoir un <strong>lien personnel</strong> (ouvre directement son tableau, sans rien saisir), ou vous pouvez diffuser un code unique pour toute la classe.
+      </div>
+    </div>
+    <div id="ad-classes"></div>
+  `);
+  chargerClassesAdmin();
+}
+
+let adEleveTokens = {}; // "classeId::eleveId" -> {token, eleveNom, createdAt}
+
+async function chargerClassesAdmin(){
+  const box = document.getElementById('ad-classes');
+  box.innerHTML = '<div class="empty">Chargement…</div>';
+  try{
+    const [rosterSnap, codesSnap, elevesTokensSnap] = await Promise.all([
+      window.fbGetDocs(window.fbCollection(window.fbDB,'edtxRoster')),
+      window.fbGetDocs(window.fbCollection(window.fbDB,'edtxTableauCodes')),
+      window.fbGetDocs(window.fbCollection(window.fbDB,'edtxTableauEleves'))
+    ]);
+    const codesMap = {};
+    codesSnap.docs.forEach(d=>{ codesMap[d.id] = d.data(); });
+    adEleveTokens = {};
+    elevesTokensSnap.docs.forEach(d=>{
+      const v = d.data();
+      adEleveTokens[v.classeId+'::'+v.eleveId] = { token: d.id, ...v };
+    });
+    const classes = rosterSnap.docs.map(d=>({ id:d.id, name:d.data().name, eleves:d.data().eleves||[], code: codesMap[d.id] && codesMap[d.id].code }));
+    if(!classes.length){
+      box.innerHTML = `<div class="empty">🏫 Aucune classe synchronisée pour l'instant.<br>Utilisez le bouton « Synchroniser vers Espace Prof » dans Emploi du temps.</div>`;
+      return;
+    }
+    box.innerHTML = classes.map(c=>`
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:14px">${esc(c.name)}</div>
+            <div style="font-size:11.5px;color:#64748b">${c.eleves.length} élève(s)</div>
+          </div>
+          ${c.code
+            ? `<span class="who-badge" style="font-family:'DM Mono',monospace;font-size:15px">${esc(c.code)}</span>`
+            : `<button class="btn btn-primary" onclick="genererCodeClasse('${c.id}','${esc(c.name).replace(/'/g,"\\'")}')">Générer un code classe</button>`}
+        </div>
+        ${c.code ? `
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
+          <button class="btn btn-green" onclick="partagerCodeWA('${c.id}','${esc(c.name).replace(/'/g,"\\'")}','${c.code}')">📱 WhatsApp (code classe)</button>
+          <button class="btn btn-ghost" onclick="partagerCodeEmail('${esc(c.name).replace(/'/g,"\\'")}','${c.code}')">✉️ Email</button>
+          <button class="btn btn-ghost" onclick="copierLienClasse('${c.id}')">🔗 Copier le lien</button>
+          <button class="btn btn-danger" onclick="regenererCodeClasse('${c.id}','${esc(c.name).replace(/'/g,"\\'")}')">🔄 Régénérer</button>
+        </div>` : ''}
+        <details style="margin-top:12px">
+          <summary style="cursor:pointer;font-size:12.5px;font-weight:700;color:#6366f1">🔗 Liens personnels par élève</summary>
+          <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
+            ${c.eleves.length ? c.eleves.map(e=>renderEleveTokenRow(c.id, c.name, e)).join('') : `<div style="font-size:12px;color:#94a3b8">Aucun élève dans cette classe.</div>`}
+          </div>
+        </details>
+      </div>
+    `).join('');
+  }catch(e){ box.innerHTML = `<div class="empty">Erreur de chargement : ${esc(e && e.message ? e.message : e)}</div>`; }
+}
+
+function renderEleveTokenRow(classeId, classeName, e){
+  const fullName = (e.name + ' ' + (e.prenom||'')).trim();
+  const key = classeId + '::' + e.id;
+  const existing = adEleveTokens[key];
+  const nameJs = esc(fullName).replace(/'/g,"\\'");
+  const classeNameJs = esc(classeName).replace(/'/g,"\\'");
+  if(!existing){
+    return `
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid #f1f5f9">
+        <span style="font-size:12.5px;font-weight:600">👤 ${esc(fullName)}</span>
+        <button class="btn-mini" onclick="genererLienEleve('${classeId}','${classeNameJs}','${e.id}','${nameJs}')">➕ Générer un lien</button>
+      </div>`;
+  }
+  return `
+    <div style="padding:6px 0;border-bottom:1px solid #f1f5f9">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
+        <span style="font-size:12.5px;font-weight:600">👤 ${esc(fullName)}</span>
+      </div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap">
+        <button class="btn-mini" style="color:#16a34a" onclick="partagerLienEleveWA('${existing.token}','${nameJs}','${classeNameJs}')">📱 WhatsApp</button>
+        <button class="btn-mini" style="color:#2563eb" onclick="partagerLienEleveEmail('${existing.token}','${nameJs}','${classeNameJs}')">✉️ Email</button>
+        <button class="btn-mini" onclick="copierLienEleve('${existing.token}')">🔗 Copier</button>
+        <button class="btn-mini" style="color:#ef4444" onclick="regenererLienEleve('${classeId}','${classeNameJs}','${e.id}','${nameJs}','${existing.token}')">🔄 Régénérer</button>
+      </div>
+    </div>`;
+}
+
+function genererCode6(){ return String(Math.floor(100000 + Math.random()*900000)); }
+function genererTokenEleve(){ return 't' + Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+
+window.genererCodeClasse = async function(classeId, classeName){
+  try{
+    await window.fbSetDoc(window.fbDoc(window.fbDB,'edtxTableauCodes',classeId), { code: genererCode6(), classeName, createdAt: Date.now() });
+    chargerClassesAdmin();
+  }catch(e){ alert('Erreur : ' + (e && e.message ? e.message : e)); }
+};
+window.regenererCodeClasse = async function(classeId, classeName){
+  if(!confirm('Régénérer le code ? L\'ancien code ne fonctionnera plus.')) return;
+  window.genererCodeClasse(classeId, classeName);
+};
+
+function buildClasseLink(classeId){
+  return `${window.location.origin}${window.location.pathname}?classe=${classeId}`;
+}
+window.copierLienClasse = function(classeId){
+  navigator.clipboard.writeText(buildClasseLink(classeId)).then(()=>alert('🔗 Lien copié !'));
+};
+window.partagerCodeWA = function(classeId, classeName, code){
+  const msg = encodeURIComponent(`💬 Bonjour,\n\nVoici l'accès au Tableau d'échange de la classe ${classeName} pour poser vos questions aux professeurs :\n${buildClasseLink(classeId)}\n\n🔑 Code : ${code}`);
+  window.open(`https://wa.me/?text=${msg}`, '_blank');
+};
+window.partagerCodeEmail = function(classeName, code){
+  const sujet = encodeURIComponent(`Accès au Tableau d'échange — ${classeName}`);
+  const corps = encodeURIComponent(`Bonjour,\n\nCode d'accès au Tableau d'échange pour la classe ${classeName} : ${code}\n\nRendez-vous sur la page du Tableau d'échange et saisissez ce code pour poser vos questions aux professeurs.`);
+  window.open(`mailto:?subject=${sujet}&body=${corps}`, '_blank');
+};
+
+// ── Liens personnels par élève ──
+function buildEleveLink(token){
+  return `${window.location.origin}${window.location.pathname}?eleve=${token}`;
+}
+window.genererLienEleve = async function(classeId, classeName, eleveId, eleveNom){
+  try{
+    const token = genererTokenEleve();
+    await window.fbSetDoc(window.fbDoc(window.fbDB,'edtxTableauEleves', token), { classeId, classeName, eleveId: String(eleveId), eleveNom, createdAt: Date.now() });
+    chargerClassesAdmin();
+  }catch(e){ alert('Erreur : ' + (e && e.message ? e.message : e)); }
+};
+window.regenererLienEleve = async function(classeId, classeName, eleveId, eleveNom, oldToken){
+  if(!confirm('Régénérer ce lien personnel ? L\'ancien lien ne fonctionnera plus.')) return;
+  try{
+    if(oldToken){ await window.fbDeleteDoc(window.fbDoc(window.fbDB,'edtxTableauEleves', oldToken)); }
+  }catch(e){}
+  window.genererLienEleve(classeId, classeName, eleveId, eleveNom);
+};
+window.copierLienEleve = function(token){
+  navigator.clipboard.writeText(buildEleveLink(token)).then(()=>alert('🔗 Lien personnel copié !'));
+};
+window.partagerLienEleveWA = function(token, eleveNom, classeName){
+  const msg = encodeURIComponent(`💬 Bonjour ${eleveNom},\n\nVoici ton lien personnel pour accéder au Tableau d'échange de la classe ${classeName} et poser tes questions aux professeurs :\n${buildEleveLink(token)}`);
+  window.open(`https://wa.me/?text=${msg}`, '_blank');
+};
+window.partagerLienEleveEmail = function(token, eleveNom, classeName){
+  const sujet = encodeURIComponent(`Ton accès au Tableau d'échange — ${classeName}`);
+  const corps = encodeURIComponent(`Bonjour ${eleveNom},\n\nVoici ton lien personnel pour accéder au Tableau d'échange de la classe ${classeName} et poser tes questions aux professeurs :\n\n${buildEleveLink(token)}`);
+  window.open(`mailto:?subject=${sujet}&body=${corps}`, '_blank');
+};
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  });
+}
+</script>
+
+</body>
+</html>
