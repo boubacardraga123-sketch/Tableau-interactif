@@ -190,12 +190,15 @@ label.f-label{font-size:11px;font-weight:700;color:var(--ink-soft);margin-bottom
 .draw-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
 .color-swatches{display:flex;gap:5px}
 .swatch{width:22px;height:22px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1.5px var(--rule);cursor:pointer;padding:0}
+.tool-btns{display:flex;gap:4px}
 .size-btns{display:flex;gap:4px}
-.size-btns button,.btn-mini{padding:5px 9px;border-radius:8px;border:1.5px solid var(--rule);background:#fff;color:var(--ink-soft);font-size:11px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif}
-.size-btns button:hover,.btn-mini:hover{background:#f5efdd}
+.size-btns button,.btn-mini,.tool-btns button{padding:5px 9px;border-radius:8px;border:1.5px solid var(--rule);background:#fff;color:var(--ink-soft);font-size:11px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif}
+.size-btns button:hover,.btn-mini:hover,.tool-btns button:hover{background:#f5efdd}
+.tool-btns button.active,.btn-mini.active{background:var(--stylo);color:#fff;border-color:var(--stylo)}
 .draw-board-frame{position:relative;border-radius:14px;padding:9px;background:linear-gradient(180deg, var(--board) 0%, var(--board-dark) 100%);border:1px solid var(--board-edge);box-shadow:0 3px 10px rgba(20,15,5,.2), inset 0 0 0 1px rgba(255,255,255,.03)}
 .draw-board-frame::after{content:'';position:absolute;inset:9px;border-radius:8px;background-image:repeating-linear-gradient(115deg, rgba(255,255,255,.02) 0 2px, transparent 2px 7px);pointer-events:none}
-.draw-canvas{width:100%;height:380px;border-radius:8px;touch-action:none;background:#15181b;display:block;cursor:crosshair;position:relative;z-index:1}
+.draw-canvas{width:100%;height:380px;border-radius:8px;touch-action:none;background:#15181b;display:block;cursor:crosshair;position:relative;z-index:1;transition:height .2s}
+.draw-canvas.expanded{height:600px}
 .q-dessin-img,.r-dessin-img{max-width:100%;border-radius:9px;margin-top:8px;border:1px solid var(--rule);display:block}
 
 /* ── Outils mathématiques : indice & puissance ── */
@@ -314,12 +317,22 @@ function composerHtml(prefix, placeholder){
         <div class="color-swatches">
           ${['#f6f2e6','#f0c14b','#e8877a','#7fb8d8','#8fc9a1'].map((c,i)=>`<button type="button" class="swatch" style="background:${c}${i===0?';box-shadow:0 0 0 2px #6366f1':''}" onclick="setCanvasColor('${prefix}-canvas','${c}')" title="Couleur"></button>`).join('')}
         </div>
+        <div class="tool-btns">
+          <button type="button" class="active" id="${prefix}-tool-pen" onclick="setCanvasTool('${prefix}-canvas','pen')" title="Stylo">✏️</button>
+          <button type="button" id="${prefix}-tool-eraser" onclick="setCanvasTool('${prefix}-canvas','eraser')" title="Gomme">🧽</button>
+          <button type="button" id="${prefix}-tool-line" onclick="setCanvasTool('${prefix}-canvas','line')" title="Ligne droite">➖</button>
+          <button type="button" id="${prefix}-tool-rect" onclick="setCanvasTool('${prefix}-canvas','rect')" title="Rectangle">▭</button>
+          <button type="button" id="${prefix}-tool-circle" onclick="setCanvasTool('${prefix}-canvas','circle')" title="Cercle / ellipse">◯</button>
+        </div>
         <div class="size-btns">
           <button type="button" onclick="setCanvasSize('${prefix}-canvas',3)">Fin</button>
           <button type="button" onclick="setCanvasSize('${prefix}-canvas',6)">Moyen</button>
           <button type="button" onclick="setCanvasSize('${prefix}-canvas',14)">Épais</button>
         </div>
         <button type="button" class="btn-mini" onclick="undoCanvas('${prefix}-canvas')">↩️ Annuler</button>
+        <button type="button" class="btn-mini" onclick="redoCanvas('${prefix}-canvas')">↪️ Rétablir</button>
+        <button type="button" class="btn-mini" id="${prefix}-grid-btn" onclick="toggleCanvasGrid('${prefix}-canvas')">▦ Grille</button>
+        <button type="button" class="btn-mini" onclick="toggleCanvasExpand('${prefix}-canvas')">⤢ Agrandir</button>
         <button type="button" class="btn-mini" onclick="clearCanvas('${prefix}-canvas')">🗑️ Effacer</button>
       </div>
       <div class="draw-board-frame">
@@ -367,6 +380,9 @@ function insertAtCursor(fieldId, text){
   el.focus();
   el.setSelectionRange(pos,pos);
 }
+window.insertMathChar = function(fieldId, btn){
+  insertAtCursor(fieldId, btn.getAttribute('data-char'));
+};
 
 window.closeMathPalette = function(prefix){
   const pal = document.getElementById(prefix+'-mathpalette');
@@ -383,7 +399,7 @@ window.toggleMathPalette = function(prefix, cat){
   if(!def) return;
   pal.dataset.cat = cat;
   pal.innerHTML = def.items.map(it=>
-    `<button type="button" class="math-key" title="${esc(def.label)}" onclick="insertAtCursor('${prefix}-text', ${JSON.stringify(it)})">${esc(it)}</button>`
+    `<button type="button" class="math-key" title="${esc(def.label)}" data-char="${esc(it)}" onclick="insertMathChar('${prefix}-text', this)">${esc(it)}</button>`
   ).join('') + `<button type="button" class="math-key math-key-close" title="Fermer" onclick="closeMathPalette('${prefix}')">✕</button>`;
   pal.style.display = 'flex';
   document.querySelectorAll(`[id^="${prefix}-mathbtn-"]`).forEach(b=>b.classList.remove('active'));
@@ -482,8 +498,9 @@ function resetAudioState(prefix){
   updateAudioBtn(prefix);
 }
 
-// ── Moteur de dessin à main libre (vectoriel, avec annuler/effacer) ──
+// ── Moteur de dessin à main libre (vectoriel, avec outils, formes, annuler/rétablir) ──
 const canvasStates = {};
+const BOARD_BG = '#15181b';
 
 function ptFromEvent(canvas, e){
   const r = canvas.getBoundingClientRect();
@@ -493,29 +510,62 @@ function ptFromEvent(canvas, e){
   };
 }
 
-function redrawCanvas(canvasId){
-  const st = canvasStates[canvasId];
-  if(!st) return;
-  const ctx = st.ctx, canvas = st.canvas;
-  ctx.fillStyle = '#15181b';
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-  st.strokes.forEach(s=>{
+function drawGridOnCanvas(ctx, canvas){
+  const step = 32;
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,255,255,.07)';
+  ctx.lineWidth = 1;
+  for(let x=0; x<=canvas.width; x+=step){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,canvas.height); ctx.stroke(); }
+  for(let y=0; y<=canvas.height; y+=step){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width,y); ctx.stroke(); }
+  ctx.restore();
+}
+
+function drawStroke(ctx, s){
+  const tool = s.tool || 'pen';
+  ctx.strokeStyle = s.color;
+  ctx.fillStyle = s.color;
+  ctx.lineWidth = s.size;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  if(tool==='pen' || tool==='eraser'){
     if(s.points.length < 2){
       ctx.beginPath();
       ctx.arc(s.points[0].x, s.points[0].y, s.size/2, 0, Math.PI*2);
-      ctx.fillStyle = s.color;
       ctx.fill();
       return;
     }
     ctx.beginPath();
     ctx.moveTo(s.points[0].x, s.points[0].y);
     for(let i=1;i<s.points.length;i++) ctx.lineTo(s.points[i].x, s.points[i].y);
-    ctx.strokeStyle = s.color;
-    ctx.lineWidth = s.size;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
     ctx.stroke();
-  });
+  } else if(tool==='line'){
+    if(s.points.length < 2) return;
+    ctx.beginPath();
+    ctx.moveTo(s.points[0].x, s.points[0].y);
+    ctx.lineTo(s.points[1].x, s.points[1].y);
+    ctx.stroke();
+  } else if(tool==='rect'){
+    if(s.points.length < 2) return;
+    const [p0,p1] = s.points;
+    ctx.strokeRect(Math.min(p0.x,p1.x), Math.min(p0.y,p1.y), Math.abs(p1.x-p0.x), Math.abs(p1.y-p0.y));
+  } else if(tool==='circle'){
+    if(s.points.length < 2) return;
+    const [p0,p1] = s.points;
+    const cx=(p0.x+p1.x)/2, cy=(p0.y+p1.y)/2, rx=Math.abs(p1.x-p0.x)/2, ry=Math.abs(p1.y-p0.y)/2;
+    ctx.beginPath();
+    ctx.ellipse(cx,cy,rx,ry,0,0,Math.PI*2);
+    ctx.stroke();
+  }
+}
+
+function redrawCanvas(canvasId){
+  const st = canvasStates[canvasId];
+  if(!st) return;
+  const ctx = st.ctx, canvas = st.canvas;
+  ctx.fillStyle = BOARD_BG;
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  if(st.showGrid) drawGridOnCanvas(ctx, canvas);
+  st.strokes.forEach(s=>drawStroke(ctx, s));
 }
 
 function initCanvas(canvasId){
@@ -523,7 +573,7 @@ function initCanvas(canvasId){
   if(!canvas || canvas.__inited) return;
   canvas.__inited = true;
   const ctx = canvas.getContext('2d');
-  const st = { canvas, ctx, strokes: [], current: null, color: '#f6f2e6', size: 4 };
+  const st = { canvas, ctx, strokes: [], redoStack: [], current: null, color: '#f6f2e6', size: 4, tool: 'pen', showGrid: false };
   canvasStates[canvasId] = st;
   redrawCanvas(canvasId);
 
@@ -531,14 +581,23 @@ function initCanvas(canvasId){
     e.preventDefault();
     try{ canvas.setPointerCapture(e.pointerId); }catch(err){}
     const p = ptFromEvent(canvas, e);
-    st.current = { color: st.color, size: st.size, points: [p] };
+    const tool = st.tool || 'pen';
+    const color = tool==='eraser' ? BOARD_BG : st.color;
+    const size = tool==='eraser' ? Math.max(st.size, 16) : st.size;
+    st.current = { tool, color, size, points: [p] };
     st.strokes.push(st.current);
+    st.redoStack = [];
     redrawCanvas(canvasId);
   }
   function move(e){
     if(!st.current) return;
     e.preventDefault();
-    st.current.points.push(ptFromEvent(canvas, e));
+    const p = ptFromEvent(canvas, e);
+    if(st.current.tool==='line' || st.current.tool==='rect' || st.current.tool==='circle'){
+      st.current.points = [st.current.points[0], p];
+    } else {
+      st.current.points.push(p);
+    }
     redrawCanvas(canvasId);
   }
   function up(){ st.current = null; }
@@ -551,8 +610,39 @@ function initCanvas(canvasId){
 
 window.setCanvasColor = function(canvasId, color){ const st = canvasStates[canvasId]; if(st) st.color = color; };
 window.setCanvasSize  = function(canvasId, size){ const st = canvasStates[canvasId]; if(st) st.size = size; };
-window.undoCanvas = function(canvasId){ const st = canvasStates[canvasId]; if(st && st.strokes.length){ st.strokes.pop(); redrawCanvas(canvasId); } };
-window.clearCanvas = function(canvasId){ const st = canvasStates[canvasId]; if(st){ st.strokes = []; redrawCanvas(canvasId); } };
+window.setCanvasTool = function(canvasId, tool){
+  const st = canvasStates[canvasId]; if(!st) return;
+  st.tool = tool;
+  const prefix = canvasId.replace(/-canvas$/,'');
+  ['pen','eraser','line','rect','circle'].forEach(t=>{
+    const b = document.getElementById(prefix+'-tool-'+t);
+    if(b) b.classList.toggle('active', t===tool);
+  });
+};
+window.toggleCanvasGrid = function(canvasId){
+  const st = canvasStates[canvasId]; if(!st) return;
+  st.showGrid = !st.showGrid;
+  const prefix = canvasId.replace(/-canvas$/,'');
+  const btn = document.getElementById(prefix+'-grid-btn');
+  if(btn) btn.classList.toggle('active', st.showGrid);
+  redrawCanvas(canvasId);
+};
+window.toggleCanvasExpand = function(canvasId){
+  const canvasEl = document.getElementById(canvasId);
+  if(canvasEl) canvasEl.classList.toggle('expanded');
+};
+window.undoCanvas = function(canvasId){
+  const st = canvasStates[canvasId];
+  if(st && st.strokes.length){ st.redoStack.push(st.strokes.pop()); redrawCanvas(canvasId); }
+};
+window.redoCanvas = function(canvasId){
+  const st = canvasStates[canvasId];
+  if(st && st.redoStack && st.redoStack.length){ st.strokes.push(st.redoStack.pop()); redrawCanvas(canvasId); }
+};
+window.clearCanvas = function(canvasId){
+  const st = canvasStates[canvasId];
+  if(st){ st.strokes = []; st.redoStack = []; redrawCanvas(canvasId); }
+};
 function canvasHasContent(canvasId){ const st = canvasStates[canvasId]; return !!(st && st.strokes.length); }
 function canvasToDataURL(canvasId){ const st = canvasStates[canvasId]; return st ? st.canvas.toDataURL('image/jpeg', 0.75) : null; }
 
