@@ -36,6 +36,8 @@
   --radius:12px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
+.offline-banner{position:sticky;top:0;z-index:50;background:#f0c14b;color:#3a2c05;font-family:'DM Sans',sans-serif;font-weight:700;font-size:12.5px;text-align:center;padding:8px 12px;border-bottom:1.5px solid #d9a82e}
+.media-offline-badge{display:inline-flex;align-items:center;gap:3px;font-family:'DM Sans',sans-serif;font-size:10.5px;font-weight:700;color:#2f7d55;background:#eaf6ee;border:1px solid #cfe9d8;border-radius:6px;padding:2px 6px;margin-top:5px}
 body{
   background:var(--paper);
   font-family:'DM Sans',sans-serif;
@@ -220,6 +222,51 @@ label.f-label{font-size:11px;font-weight:700;color:var(--ink-soft);margin-bottom
 .audio-preview audio{flex:1;height:36px}
 .q-audio,.r-audio{width:100%;height:36px;margin-top:8px;display:block}
 
+/* ── Pièce jointe (photo / PDF d'un sujet) ── */
+.file-drop{display:flex;align-items:center;gap:10px;padding:14px;background:#fff;border:1.5px dashed var(--rule);border-radius:10px;cursor:pointer;text-align:center;justify-content:center}
+.file-drop:hover{border-color:var(--stylo);background:var(--stylo-tint)}
+.file-drop span{font-size:12.5px;font-weight:700;color:var(--ink-soft)}
+.file-preview{margin-top:10px;display:none;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:1.5px solid var(--rule);border-radius:10px;padding:8px 10px}
+.file-hint{font-size:10.5px;color:#a8998a;margin-top:5px}
+.q-fichier-link,.r-fichier-link{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:12.5px;font-weight:700;color:var(--stylo-dark);text-decoration:none;background:var(--stylo-tint);padding:8px 12px;border-radius:9px}
+.q-fichier-link:hover,.r-fichier-link:hover{background:#dfe3ff}
+.upload-progress{margin-top:8px}
+.upload-bar-track{background:#e8dcc0;border-radius:6px;overflow:hidden;height:8px}
+.upload-bar-fill{background:var(--stylo);height:100%;width:0%;transition:width .15s}
+
+/* ── Sous-onglets vidéo (fichier / lien YouTube) ── */
+.video-subtabs{display:flex;gap:6px;margin-bottom:8px}
+.video-subtab{padding:6px 12px;border-radius:8px;border:1.5px solid var(--rule);background:#fff;color:var(--ink-soft);font-weight:700;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.video-subtab.active{background:#c1272d;color:#fff;border-color:#c1272d}
+.youtube-input{width:100%;padding:11px 12px;border:1.5px solid var(--rule);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;background:#fff;margin-bottom:8px}
+.youtube-input:focus{outline:none;border-color:var(--stylo)}
+.yt-embed-wrap{position:relative;width:100%;padding-top:56.25%;border-radius:9px;margin-top:8px;overflow:hidden;background:#000}
+.yt-embed-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+/* ── Annales (bibliothèque d'anciens sujets) ── */
+.annale-tags{display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 8px}
+.annale-tag{font-size:10px;font-weight:700;border-radius:5px;padding:3px 8px;text-transform:uppercase;letter-spacing:.3px}
+.annale-tag-matiere{background:var(--stylo-tint);color:var(--stylo-dark)}
+.annale-tag-niveau{background:var(--correction-tint);color:var(--correction-dark)}
+.annale-tag-annee{background:var(--marge-soft);color:var(--marge)}
+.annale-titre{font-family:'Fraunces',serif;font-weight:700;font-size:15px;color:var(--ink);margin-bottom:2px}
+.annale-desc{font-size:13px;color:#3a4552;line-height:1.5;margin:4px 0 8px;white-space:pre-wrap}
+.annale-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.annale-filters>*{flex:1;min-width:110px}
+.annale-file-link{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--stylo-dark);text-decoration:none;background:var(--stylo-tint);padding:8px 12px;border-radius:9px}
+.annale-file-link:hover{background:#dfe3ff}
+.annale-img-prev{max-width:100%;border-radius:9px;border:1px solid var(--rule);display:block;margin-top:6px}
+.annale-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:8px}
+.upload-status{font-size:11px;color:var(--ink-soft);margin-top:4px}
+.q-video,.r-video,.cours-video{width:100%;border-radius:9px;margin-top:8px;display:block;background:#000}
+.cours-card{background:var(--paper-card)}
+.cours-titre{font-family:'Fraunces',serif;font-weight:700;font-size:15px;color:var(--ink);margin-bottom:2px}
+.cours-desc{font-size:13px;color:#3a4552;line-height:1.5;margin:6px 0;white-space:pre-wrap}
+.cours-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.sub-tabs{display:flex;gap:6px;margin:0 0 14px}
+.sub-tab{padding:8px 16px;border-radius:20px;border:1.5px solid var(--rule);background:#fff;color:var(--ink-soft);font-weight:700;font-size:12.5px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.sub-tab.active{background:var(--stylo);color:#fff;border-color:var(--stylo)}
+
 .empty{text-align:center;padding:30px 14px;color:#a8998a;font-size:13px}
 
 .fab-new{position:sticky;bottom:14px;display:flex;justify-content:center;margin-top:8px}
@@ -249,6 +296,7 @@ label.f-label{font-size:11px;font-weight:700;color:var(--ink-soft);margin-bottom
       </div>
     </div>
   </div>
+  <div id="offline-banner" class="offline-banner" style="display:none">📡 Hors-ligne — les vidéos et fiches déjà consultées restent disponibles</div>
   <div id="screen"></div>
 </div>
 
@@ -258,6 +306,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getFirestore, doc, setDoc, getDoc, collection, getDocs, onSnapshot,
          addDoc, query, where, orderBy, deleteDoc, updateDoc
        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL, deleteObject
+       } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBYeYPOptN2wEak_Ctcr4a8t5qXpj4riLE",
@@ -269,12 +319,16 @@ const firebaseConfig = {
 };
 const fbApp = initializeApp(firebaseConfig);
 const fbDB  = getFirestore(fbApp);
+const fbSt  = getStorage(fbApp);
 
 window.fbDB = fbDB;
 window.fbDoc = doc; window.fbSetDoc = setDoc; window.fbGetDoc = getDoc;
 window.fbCollection = collection; window.fbGetDocs = getDocs; window.fbOnSnapshot = onSnapshot;
 window.fbAddDoc = addDoc; window.fbQuery = query; window.fbWhere = where; window.fbOrderBy = orderBy;
 window.fbDeleteDoc = deleteDoc; window.fbUpdateDoc = updateDoc;
+window.fbStorage = fbSt; window.fbStorageRef = storageRef;
+window.fbUploadBytesResumable = uploadBytesResumable; window.fbGetDownloadURL = getDownloadURL;
+window.fbDeleteObject = deleteObject;
 window.dispatchEvent(new Event('fb-ready'));
 </script>
 
@@ -298,12 +352,15 @@ function qs(k){ return new URLSearchParams(location.search).get(k); }
 function screen(html){ document.getElementById('screen').innerHTML = html; }
 
 // ═══════════════ Composeur Clavier / Dessin (réutilisable) ═══════════════
-function composerHtml(prefix, placeholder){
+function composerHtml(prefix, placeholder, opts){
+  opts = opts || {};
   return `
     <div class="composer-tabs">
       <button type="button" class="composer-tab active" data-composer="${prefix}" data-mode="texte" onclick="switchComposerMode('${prefix}','texte')">⌨️ Clavier</button>
       <button type="button" class="composer-tab" data-composer="${prefix}" data-mode="dessin" onclick="switchComposerMode('${prefix}','dessin')">✏️ Dessin libre</button>
       <button type="button" class="composer-tab" data-composer="${prefix}" data-mode="audio" onclick="switchComposerMode('${prefix}','audio')">🎙️ Audio</button>
+      <button type="button" class="composer-tab" data-composer="${prefix}" data-mode="fichier" onclick="switchComposerMode('${prefix}','fichier')">📎 Sujet</button>
+      ${opts.allowVideo ? `<button type="button" class="composer-tab" data-composer="${prefix}" data-mode="video" onclick="switchComposerMode('${prefix}','video')">🎥 Vidéo</button>` : ''}
     </div>
     <div id="${prefix}-text-wrap">
       <textarea id="${prefix}-text" placeholder="${esc(placeholder)}"></textarea>
@@ -346,16 +403,67 @@ function composerHtml(prefix, placeholder){
       </div>
       <div class="audio-preview" id="${prefix}-audio-preview"></div>
     </div>
+    <div id="${prefix}-file-wrap" style="display:none">
+      <label class="file-drop" for="${prefix}-file-input">
+        <span>📎 Touchez pour joindre une photo ou un PDF du sujet</span>
+      </label>
+      <input type="file" id="${prefix}-file-input" accept="image/*,application/pdf" style="display:none" onchange="handleFileSelect('${prefix}', this)">
+      <div class="file-hint">Formats acceptés : image (JPG/PNG) ou PDF, 5 Mo max.</div>
+      <div class="file-preview" id="${prefix}-file-preview"></div>
+    </div>
+    ${opts.allowVideo ? `
+    <div id="${prefix}-video-wrap" style="display:none">
+      ${videoInputHtml(prefix)}
+    </div>` : ''}
   `;
 }
+
+// ── Bloc réutilisable : envoi vidéo (fichier OU lien YouTube) ──
+function videoInputHtml(prefix){
+  return `
+    <div class="video-subtabs">
+      <button type="button" class="video-subtab active" data-videosub="${prefix}" data-vsmode="upload" onclick="switchVideoSubMode('${prefix}','upload')">📁 Fichier vidéo</button>
+      <button type="button" class="video-subtab" data-videosub="${prefix}" data-vsmode="youtube" onclick="switchVideoSubMode('${prefix}','youtube')">📺 Lien YouTube</button>
+    </div>
+    <div id="${prefix}-video-upload-wrap">
+      <label class="file-drop" for="${prefix}-video-input">
+        <span>🎥 Touchez pour choisir une vidéo (MP4/MOV)</span>
+      </label>
+      <input type="file" id="${prefix}-video-input" accept="video/*" style="display:none" onchange="handleVideoSelect('${prefix}', this)">
+      <div class="file-hint">200 Mo max. L'envoi peut prendre du temps selon la connexion — ne quittez pas la page pendant l'envoi.</div>
+    </div>
+    <div id="${prefix}-video-youtube-wrap" style="display:none">
+      <input type="text" id="${prefix}-youtube-input" class="youtube-input" placeholder="Collez le lien YouTube (https://youtube.com/watch?v=...)">
+      <button type="button" class="btn btn-primary btn-block" onclick="handleYoutubeLink('${prefix}')">✅ Valider le lien YouTube</button>
+      <div class="file-hint">La vidéo reste hébergée sur YouTube et s'affichera directement dans le tableau, sans limite de taille.</div>
+    </div>
+    <div class="upload-progress" id="${prefix}-video-progress" style="display:none">
+      <div class="upload-bar-track"><div class="upload-bar-fill" id="${prefix}-video-bar"></div></div>
+      <div class="upload-status" id="${prefix}-video-status"></div>
+    </div>
+    <div class="file-preview" id="${prefix}-video-preview"></div>
+  `;
+}
+
+window.switchVideoSubMode = function(prefix, mode){
+  document.querySelectorAll(`[data-videosub="${prefix}"]`).forEach(b=>b.classList.toggle('active', b.dataset.vsmode===mode));
+  const up = document.getElementById(prefix+'-video-upload-wrap');
+  const yt = document.getElementById(prefix+'-video-youtube-wrap');
+  if(up) up.style.display = mode==='upload' ? '' : 'none';
+  if(yt) yt.style.display = mode==='youtube' ? '' : 'none';
+};
 
 window.switchComposerMode = function(prefix, mode){
   const textWrap = document.getElementById(prefix+'-text-wrap');
   const drawWrap = document.getElementById(prefix+'-draw-wrap');
   const audioWrap = document.getElementById(prefix+'-audio-wrap');
+  const fileWrap = document.getElementById(prefix+'-file-wrap');
+  const videoWrap = document.getElementById(prefix+'-video-wrap');
   if(textWrap) textWrap.style.display = mode==='texte' ? '' : 'none';
   if(drawWrap) drawWrap.style.display = mode==='dessin' ? '' : 'none';
   if(audioWrap) audioWrap.style.display = mode==='audio' ? '' : 'none';
+  if(fileWrap) fileWrap.style.display = mode==='fichier' ? '' : 'none';
+  if(videoWrap) videoWrap.style.display = mode==='video' ? '' : 'none';
   document.querySelectorAll(`[data-composer="${prefix}"]`).forEach(b=>b.classList.toggle('active', b.dataset.mode===mode));
   if(mode==='dessin') initCanvas(prefix+'-canvas');
 };
@@ -496,6 +604,210 @@ function resetAudioState(prefix){
   if(st){ st.dataUrl = null; st.chunks = []; }
   renderAudioPreview(prefix);
   updateAudioBtn(prefix);
+}
+
+// ── Pièce jointe : photo ou PDF d'un sujet ──
+const fileStates = {};
+const FILE_MAX_BYTES = 5 * 1024 * 1024; // 5 Mo à la sélection (avant compression image)
+const PDF_MAX_BYTES = 650 * 1024; // le base64 ajoute ~37% : reste sous la limite Firestore de 1 Mo/document
+
+function readFileAsDataUrl(file){
+  return new Promise((res,rej)=>{
+    const r = new FileReader();
+    r.onload = () => res(r.result);
+    r.onerror = () => rej(new Error('Lecture du fichier impossible.'));
+    r.readAsDataURL(file);
+  });
+}
+
+function compressImageFile(file){
+  return new Promise((res,rej)=>{
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const maxDim = 1280;
+      let w = img.width, h = img.height;
+      if(w > maxDim || h > maxDim){
+        if(w >= h){ h = Math.round(h * maxDim / w); w = maxDim; }
+        else { w = Math.round(w * maxDim / h); h = maxDim; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0,0,w,h);
+      ctx.drawImage(img, 0, 0, w, h);
+      res(canvas.toDataURL('image/jpeg', 0.72));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('Image invalide.')); };
+    img.src = url;
+  });
+}
+
+window.handleFileSelect = async function(prefix, inputEl){
+  const file = inputEl.files && inputEl.files[0];
+  if(!file) return;
+  const isImage = file.type.startsWith('image/');
+  const isPdf = file.type === 'application/pdf';
+  if(!isImage && !isPdf){ alert('Seuls les fichiers image ou PDF sont acceptés.'); inputEl.value=''; return; }
+  if(file.size > FILE_MAX_BYTES){ alert('Ce fichier est trop volumineux (5 Mo max).'); inputEl.value=''; return; }
+  try{
+    if(isImage){
+      const dataUrl = await compressImageFile(file);
+      fileStates[prefix] = { dataUrl, type:'image', nom:file.name };
+    } else {
+      if(file.size > PDF_MAX_BYTES){ alert('Ce PDF est trop volumineux. Merci de joindre un fichier de moins de 650 Ko (ou une photo des pages).'); inputEl.value=''; return; }
+      const dataUrl = await readFileAsDataUrl(file);
+      fileStates[prefix] = { dataUrl, type:'pdf', nom:file.name };
+    }
+    renderFilePreview(prefix);
+  }catch(e){ alert('Erreur : ' + (e && e.message ? e.message : e)); }
+  inputEl.value = '';
+};
+
+function renderFilePreview(prefix){
+  const box = document.getElementById(prefix+'-file-preview');
+  if(!box) return;
+  const st = fileStates[prefix];
+  if(!st){ box.style.display = 'none'; box.innerHTML = ''; return; }
+  box.style.display = 'flex';
+  if(st.type==='image'){
+    box.innerHTML = `<img src="${st.dataUrl}" style="max-width:96px;max-height:96px;border-radius:8px;border:1px solid var(--rule);display:block"><button type="button" class="btn-mini" onclick="deleteFileAttachment('${prefix}')">🗑️ Supprimer</button>`;
+  } else {
+    box.innerHTML = `<span style="font-size:12.5px;font-weight:700;color:var(--ink)">📄 ${esc(st.nom)}</span><button type="button" class="btn-mini" onclick="deleteFileAttachment('${prefix}')">🗑️ Supprimer</button>`;
+  }
+}
+
+window.deleteFileAttachment = function(prefix){
+  delete fileStates[prefix];
+  renderFilePreview(prefix);
+};
+
+function fileHasContent(prefix){ return !!fileStates[prefix]; }
+function fileGetData(prefix){ return fileStates[prefix] || null; }
+function resetFileState(prefix){ delete fileStates[prefix]; renderFilePreview(prefix); }
+
+// ── Vidéo de cours (upload vers Firebase Storage) ──
+const videoStates = {};
+const VIDEO_MAX_BYTES = 200 * 1024 * 1024; // 200 Mo
+
+function slugifyFileName(name){
+  return String(name||'video').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9._-]+/g,'_').slice(-80);
+}
+
+window.handleVideoSelect = function(prefix, inputEl){
+  const file = inputEl.files && inputEl.files[0];
+  if(!file) return;
+  if(!file.type.startsWith('video/')){ alert('Veuillez choisir un fichier vidéo (MP4, MOV...).'); inputEl.value=''; return; }
+  if(file.size > VIDEO_MAX_BYTES){ alert('Cette vidéo est trop volumineuse (200 Mo max).'); inputEl.value=''; return; }
+  if(!fbReady){ alert('Connexion en cours, réessayez dans un instant.'); inputEl.value=''; return; }
+  uploadVideoFile(prefix, file);
+  inputEl.value = '';
+};
+
+function uploadVideoFile(prefix, file){
+  const progWrap = document.getElementById(prefix+'-video-progress');
+  const bar = document.getElementById(prefix+'-video-bar');
+  const status = document.getElementById(prefix+'-video-status');
+  const preview = document.getElementById(prefix+'-video-preview');
+  if(preview){ preview.style.display='none'; preview.innerHTML=''; }
+  if(progWrap) progWrap.style.display='block';
+  if(bar) bar.style.width='0%';
+  if(status) status.textContent = 'Envoi en cours… 0 %';
+  const path = 'edtxVideos/' + Date.now() + '_' + slugifyFileName(file.name);
+  const sref = window.fbStorageRef(window.fbStorage, path);
+  const task = window.fbUploadBytesResumable(sref, file, { contentType: file.type });
+  videoStates[prefix] = { uploading:true, task, path };
+  task.on('state_changed',
+    snap=>{
+      const pct = snap.totalBytes ? Math.round((snap.bytesTransferred/snap.totalBytes)*100) : 0;
+      if(bar) bar.style.width = pct+'%';
+      if(status) status.textContent = `Envoi en cours… ${pct} %`;
+    },
+    err=>{
+      videoStates[prefix] = null;
+      if(progWrap) progWrap.style.display='none';
+      alert("Erreur d'envoi de la vidéo : " + (err && err.message ? err.message : err));
+    },
+    async ()=>{
+      try{
+        const url = await window.fbGetDownloadURL(task.snapshot.ref);
+        videoStates[prefix] = { uploading:false, url, nom:file.name, path };
+        if(status) status.textContent = '✅ Vidéo envoyée';
+        renderVideoPreview(prefix);
+      }catch(err){
+        videoStates[prefix] = null;
+        if(progWrap) progWrap.style.display='none';
+        alert("Erreur d'envoi de la vidéo : " + (err && err.message ? err.message : err));
+      }
+    }
+  );
+}
+
+function renderVideoPreview(prefix){
+  const box = document.getElementById(prefix+'-video-preview');
+  if(!box) return;
+  const st = videoStates[prefix];
+  if(!st || !st.url){ box.style.display='none'; box.innerHTML=''; return; }
+  box.style.display='flex';
+  if(st.youtube){
+    box.innerHTML = `<span style="font-size:12.5px;font-weight:700;color:var(--ink)">📺 Lien YouTube ajouté</span><button type="button" class="btn-mini" onclick="deleteVideoAttachment('${prefix}')">🗑️ Supprimer</button>`;
+  } else {
+    box.innerHTML = `<span style="font-size:12.5px;font-weight:700;color:var(--ink)">🎥 ${esc(st.nom)}</span><button type="button" class="btn-mini" onclick="deleteVideoAttachment('${prefix}')">🗑️ Supprimer</button>`;
+  }
+}
+
+window.deleteVideoAttachment = function(prefix){
+  const st = videoStates[prefix];
+  videoStates[prefix] = null;
+  const progWrap = document.getElementById(prefix+'-video-progress');
+  if(progWrap) progWrap.style.display='none';
+  const ytInput = document.getElementById(prefix+'-youtube-input');
+  if(ytInput) ytInput.value = '';
+  renderVideoPreview(prefix);
+  if(st && st.path && st.url && !st.youtube){
+    try{ window.fbDeleteObject(window.fbStorageRef(window.fbStorage, st.path)); }catch(e){}
+  }
+};
+
+// ── Vidéo de cours (lien YouTube) ──
+function extractYouTubeId(url){
+  if(!url) return null;
+  const m = String(url).trim().match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/)|youtube\.com\/watch\?[^#]*[?&]v=)([a-zA-Z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
+window.handleYoutubeLink = function(prefix){
+  const input = document.getElementById(prefix+'-youtube-input');
+  const raw = input ? input.value.trim() : '';
+  if(!raw){ alert('Collez un lien YouTube avant de valider.'); return; }
+  const yid = extractYouTubeId(raw);
+  if(!yid){ alert("Lien YouTube non reconnu. Exemple valide : https://www.youtube.com/watch?v=XXXXXXXXXXX"); return; }
+  videoStates[prefix] = { uploading:false, url:`https://www.youtube.com/watch?v=${yid}`, nom:'Vidéo YouTube', youtube:true };
+  const progWrap = document.getElementById(prefix+'-video-progress');
+  if(progWrap) progWrap.style.display='none';
+  renderVideoPreview(prefix);
+  if(input) input.value = '';
+};
+
+// ── Affichage d'une vidéo : lecteur natif (fichier uploadé) ou lecteur YouTube intégré ──
+function videoEmbedHtml(url, cssClass){
+  const yid = extractYouTubeId(url);
+  if(yid){
+    return `<div class="yt-embed-wrap"><iframe src="https://www.youtube.com/embed/${yid}" title="Vidéo YouTube" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+  }
+  return `<video class="${cssClass}" controls preload="metadata" src="${esc(url)}" data-media-url="${esc(url)}" data-media-kind="video"></video>`;
+}
+
+function videoIsUploading(prefix){ const st = videoStates[prefix]; return !!(st && st.uploading); }
+function videoHasContent(prefix){ const st = videoStates[prefix]; return !!(st && st.url); }
+function videoGetData(prefix){ const st = videoStates[prefix]; return st && st.url ? { url:st.url, nom:st.nom } : null; }
+function resetVideoState(prefix){
+  videoStates[prefix] = null;
+  const progWrap = document.getElementById(prefix+'-video-progress');
+  if(progWrap) progWrap.style.display='none';
+  renderVideoPreview(prefix);
 }
 
 // ── Moteur de dessin à main libre (vectoriel, avec outils, formes, annuler/rétablir) ──
@@ -674,7 +986,7 @@ async function ouvrirLienPersonnelEleve(token){
     const snap = await window.fbGetDoc(window.fbDoc(window.fbDB,'edtxTableauEleves', token));
     if(!snap.exists()){ alert('Ce lien personnel est invalide ou a été régénéré.'); renderRoleSelect(); return; }
     const d = snap.data();
-    startEleveSession(d.classeId, d.eleveNom, d.classeName);
+    startEleveSession(d.classeId, d.eleveNom, d.classeName, d.eleveId);
   }catch(e){ alert('Erreur : ' + (e && e.message ? e.message : e)); renderRoleSelect(); }
 }
 
@@ -740,11 +1052,6 @@ function renderEleveNom(classeId, classeData){
           <input type="text" id="el-nom-search" placeholder="Tapez votre nom..." oninput="filtrerRosterEleve('${classeId}')">
           <div id="el-roster-list" style="margin-top:8px;max-height:180px;overflow-y:auto"></div>
         </div>
-        <div class="field">
-          <label class="f-label">Ou saisissez librement</label>
-          <input type="text" id="el-nom-libre" placeholder="Prénom Nom">
-          <button class="btn btn-ghost btn-block" style="margin-top:6px" onclick="eleveValiderNomLibre('${classeId}')">Continuer avec ce nom</button>
-        </div>
       </div>
       <div class="center"><button class="link-btn" onclick="renderRoleSelect()">← Retour</button></div>
     </div>
@@ -768,22 +1075,17 @@ window.filtrerRosterEleve = function(classeId){
   if(!q){ box.innerHTML = ''; return; }
   const found = list.filter(e => (e.name+' '+(e.prenom||'')).toLowerCase().includes(q)).slice(0,8);
   box.innerHTML = found.length ? found.map(e=>`
-    <div style="padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px" onmouseover="this.style.background='var(--stylo-tint)'" onmouseout="this.style.background='transparent'" onclick="eleveValiderNomRoster('${classeId}','${esc(e.name).replace(/'/g,"\\'")}','${esc(e.prenom||'').replace(/'/g,"\\'")}')">
+    <div style="padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px" onmouseover="this.style.background='var(--stylo-tint)'" onmouseout="this.style.background='transparent'" onclick="eleveValiderNomRoster('${classeId}','${esc(String(e.id)).replace(/'/g,"\\'")}','${esc(e.name).replace(/'/g,"\\'")}','${esc(e.prenom||'').replace(/'/g,"\\'")}')">
       👤 ${esc(e.name)} ${esc(e.prenom||'')}
-    </div>`).join('') : `<div style="font-size:12px;color:var(--ink-soft);padding:6px">Aucun élève trouvé — utilisez la saisie libre ci-dessous.</div>`;
+    </div>`).join('') : `<div style="font-size:12px;color:var(--ink-soft);padding:6px">Aucun élève trouvé — vérifiez l'orthographe, ou contactez votre professeur si votre nom n'est pas encore dans la liste de la classe.</div>`;
 };
 
-window.eleveValiderNomRoster = function(classeId, name, prenom){
+window.eleveValiderNomRoster = function(classeId, eleveId, name, prenom){
   const full = (name + ' ' + (prenom||'')).trim();
-  startEleveSession(classeId, full);
-};
-window.eleveValiderNomLibre = function(classeId){
-  const v = (document.getElementById('el-nom-libre').value||'').trim();
-  if(!v){ alert('Veuillez saisir votre nom.'); return; }
-  startEleveSession(classeId, v);
+  startEleveSession(classeId, full, null, eleveId);
 };
 
-async function startEleveSession(classeId, eleveNom, classeNameOverride){
+async function startEleveSession(classeId, eleveNom, classeNameOverride, eleveId){
   let classeName = classeNameOverride || classeId;
   if(!classeNameOverride){
     try{
@@ -791,54 +1093,104 @@ async function startEleveSession(classeId, eleveNom, classeNameOverride){
       if(cSnap.exists()) classeName = cSnap.data().classeName;
     }catch(e){}
   }
-  const s = { role:'eleve', classeId, classeName, eleveNom };
+  const s = { role:'eleve', classeId, classeName, eleveNom, eleveId: eleveId ? String(eleveId) : null };
   setSession(s);
   renderEleveBoard(s);
 }
 
 // ═══════════════ ÉLÈVE — tableau ═══════════════
+let eleveActiveTab = 'questions'; // 'questions' | 'cours' | 'annales'
+
 function renderEleveBoard(s){
   screen(`
     <div class="topbar">
       <span class="who-badge">🎒 ${esc(s.eleveNom)} · ${esc(s.classeName)}</span>
       <button class="link-btn" onclick="quitterSession()">Changer d'élève</button>
     </div>
-    <div class="card">
-      <label class="f-label">Poser une question</label>
-      <div class="field" style="margin-top:8px">
-        <select id="el-matiere"><option value="">Choisir une matière...</option></select>
-      </div>
-      <div class="field">
-        ${composerHtml('el-q','Écrivez votre question ici...')}
-      </div>
-      <button class="btn btn-primary btn-block" onclick="eleveEnvoyerQuestion()">📤 Envoyer la question</button>
-    </div>
-    <div id="el-board"></div>
+    <div id="el-subtabs" class="sub-tabs"></div>
+    <div id="el-content"></div>
   `);
-  chargerMatieresDansSelect('el-matiere');
-  ecouterTableauClasse(s.classeId, list => renderBoardEleve(list, s));
+  renderEleveSubTabs();
+  ouvrirOngletEleve(s);
+}
+
+function renderEleveSubTabs(){
+  const box = document.getElementById('el-subtabs');
+  if(!box) return;
+  box.innerHTML = `
+    <button class="sub-tab ${eleveActiveTab==='questions'?'active':''}" onclick="eleveChangerSousOnglet('questions')">💬 Questions</button>
+    <button class="sub-tab ${eleveActiveTab==='cours'?'active':''}" onclick="eleveChangerSousOnglet('cours')">🎥 Cours</button>
+    <button class="sub-tab ${eleveActiveTab==='annales'?'active':''}" onclick="eleveChangerSousOnglet('annales')">📚 Annales</button>
+  `;
+}
+
+window.eleveChangerSousOnglet = function(tab){
+  eleveActiveTab = tab;
+  renderEleveSubTabs();
+  ouvrirOngletEleve(getSession());
+};
+
+function ouvrirOngletEleve(s){
+  const box = document.getElementById('el-content');
+  if(!box) return;
+  if(eleveActiveTab==='annales'){
+    if(unsubBoard){ unsubBoard(); unsubBoard=null; }
+    if(unsubProfsList){ unsubProfsList(); unsubProfsList=null; }
+    if(unsubCours){ unsubCours(); unsubCours=null; }
+    box.innerHTML = `<div class="card"><label class="f-label">📚 Rechercher une annale</label><div style="margin-top:10px">${annalesSectionHtml('el-an')}</div></div>`;
+    demarrerEcouteAnnales('el-an');
+  } else if(eleveActiveTab==='cours'){
+    if(unsubBoard){ unsubBoard(); unsubBoard=null; }
+    if(unsubProfsList){ unsubProfsList(); unsubProfsList=null; }
+    if(unsubAnnales){ unsubAnnales(); unsubAnnales=null; }
+    box.innerHTML = `<div id="el-co-board"></div>`;
+    ecouterCoursClasse(s.classeId, list => renderCoursListe(list, null, 'el-co-board'));
+  } else {
+    if(unsubCours){ unsubCours(); unsubCours=null; }
+    if(unsubAnnales){ unsubAnnales(); unsubAnnales=null; }
+    box.innerHTML = `
+      <div class="card">
+        <label class="f-label">Poser une question</label>
+        <div class="field" style="margin-top:8px">
+          <select id="el-matiere"><option value="">Choisir une matière...</option></select>
+        </div>
+        <div class="field">
+          ${composerHtml('el-q','Écrivez votre question ici...')}
+        </div>
+        <button class="btn btn-primary btn-block" onclick="eleveEnvoyerQuestion()">📤 Envoyer la question</button>
+      </div>
+      <div id="el-board"></div>
+    `;
+    chargerMatieresDansSelect('el-matiere');
+    ecouterTableauClasse(s.classeId, list => renderBoardEleve(list, s));
+  }
 }
 
 window.quitterSession = function(){
   clearSession();
   if(unsubBoard){ unsubBoard(); unsubBoard=null; }
   if(unsubProfsList){ unsubProfsList(); unsubProfsList=null; }
+  if(unsubCours){ unsubCours(); unsubCours=null; }
+  if(unsubAnnales){ unsubAnnales(); unsubAnnales=null; }
   if(qs('eleve') || qs('classe')){ location.href = location.pathname; return; }
   renderRoleSelect();
 };
 
-function chargerMatieresDansSelect(selectId){
+function chargerMatieresDansSelect(selectIds){
+  const ids = Array.isArray(selectIds) ? selectIds : [selectIds];
   if(unsubProfsList) unsubProfsList();
   unsubProfsList = window.fbOnSnapshot(window.fbCollection(window.fbDB,'profs'), snap=>{
     const matieresSet = new Set();
     snap.docs.forEach(d=>{ (d.data().matieres||[]).forEach(m=>matieresSet.add(m)); });
     profsCache = snap.docs.map(d=>({ code:d.id, ...d.data() }));
-    const sel = document.getElementById(selectId);
-    if(!sel) return;
-    const current = sel.value;
     const matieres = [...matieresSet].sort((a,b)=>a.localeCompare(b));
-    sel.innerHTML = '<option value="">Choisir une matière...</option>' + matieres.map(m=>`<option value="${esc(m)}">${esc(m)}</option>`).join('');
-    if(matieres.includes(current)) sel.value = current;
+    ids.forEach(selectId=>{
+      const sel = document.getElementById(selectId);
+      if(!sel) return;
+      const current = sel.value;
+      sel.innerHTML = '<option value="">Choisir une matière...</option>' + matieres.map(m=>`<option value="${esc(m)}">${esc(m)}</option>`).join('');
+      if(matieres.includes(current)) sel.value = current;
+    });
   }, err=>console.warn('profs listener error', err));
 }
 
@@ -849,18 +1201,21 @@ window.eleveEnvoyerQuestion = async function(){
   const question = (document.getElementById('el-q-text').value||'').trim();
   const dessin = canvasHasContent('el-q-canvas') ? canvasToDataURL('el-q-canvas') : null;
   const audio = audioHasContent('el-q') ? audioToDataURL('el-q') : null;
+  const fichier = fileHasContent('el-q') ? fileGetData('el-q') : null;
   if(!matiere){ alert('Veuillez choisir une matière.'); return; }
-  if(!question && !dessin && !audio){ alert('Veuillez écrire votre question, faire un dessin ou enregistrer un message vocal.'); return; }
+  if(!question && !dessin && !audio && !fichier){ alert('Veuillez écrire votre question, faire un dessin, enregistrer un message vocal ou joindre un sujet (photo/PDF).'); return; }
   try{
     await window.fbAddDoc(window.fbCollection(window.fbDB,'edtxTableau'), {
       classeId: s.classeId, classeName: s.classeName,
-      matiere, eleveNom: s.eleveNom, question: question||'', dessin: dessin||null, audio: audio||null,
+      matiere, eleveNom: s.eleveNom, eleveId: s.eleveId || null, question: question||'', dessin: dessin||null, audio: audio||null,
+      fichier: fichier||null,
       createdAt: Date.now(), reponses: []
     });
     document.getElementById('el-q-text').value = '';
     document.getElementById('el-matiere').value = '';
     clearCanvas('el-q-canvas');
     resetAudioState('el-q');
+    resetFileState('el-q');
     switchComposerMode('el-q','texte');
   }catch(e){ alert('Erreur d\'envoi : ' + (e && e.message ? e.message : e)); }
 };
@@ -870,6 +1225,7 @@ function renderBoardEleve(list, s){
   if(!box) return;
   if(!list.length){ box.innerHTML = `<div class="empty">💬 Aucune question pour l'instant.<br>Soyez le premier à en poser une !</div>`; return; }
   box.innerHTML = list.map(q=>renderQItem(q, {readonly:true, eleve:s})).join('');
+  enhanceOfflineMedia(box);
 }
 
 // ═══════════════ PROFESSEUR — connexion ═══════════════
@@ -905,6 +1261,7 @@ window.profValiderCode = async function(){
 // ═══════════════ PROFESSEUR — tableau (onglets par classe) ═══════════════
 let profClasses = [];
 let profActiveClasse = null;
+let profActiveTab = 'questions'; // 'questions' | 'cours' | 'annales'
 
 function renderProfBoard(s){
   screen(`
@@ -913,6 +1270,7 @@ function renderProfBoard(s){
       <button class="link-btn" onclick="quitterSession()">Se déconnecter</button>
     </div>
     <div id="pr-tabs" class="tabs"></div>
+    <div id="pr-subtabs" class="sub-tabs"></div>
     <div id="pr-board"></div>
   `);
   chargerClassesPourProf(s);
@@ -929,6 +1287,7 @@ async function chargerClassesPourProf(s){
   }
   profActiveClasse = profClasses[0].id;
   renderProfTabs();
+  renderProfSubTabs();
   ouvrirClasseProf(profActiveClasse, s);
 }
 
@@ -939,6 +1298,22 @@ function renderProfTabs(){
   `).join('');
 }
 
+function renderProfSubTabs(){
+  const box = document.getElementById('pr-subtabs');
+  if(!box) return;
+  box.innerHTML = `
+    <button class="sub-tab ${profActiveTab==='questions'?'active':''}" onclick="profChangerSousOnglet('questions')">💬 Questions</button>
+    <button class="sub-tab ${profActiveTab==='cours'?'active':''}" onclick="profChangerSousOnglet('cours')">🎥 Cours</button>
+    <button class="sub-tab ${profActiveTab==='annales'?'active':''}" onclick="profChangerSousOnglet('annales')">📚 Annales</button>
+  `;
+}
+
+window.profChangerSousOnglet = function(tab){
+  profActiveTab = tab;
+  renderProfSubTabs();
+  ouvrirClasseProf(profActiveClasse, getSession());
+};
+
 window.profChangerClasse = function(classeId){
   profActiveClasse = classeId;
   renderProfTabs();
@@ -947,7 +1322,32 @@ window.profChangerClasse = function(classeId){
 
 function ouvrirClasseProf(classeId, s){
   document.getElementById('pr-board').innerHTML = '<div class="empty">Chargement…</div>';
-  ecouterTableauClasse(classeId, list => renderBoardProf(list, s));
+  if(profActiveTab==='annales'){
+    if(unsubBoard){ unsubBoard(); unsubBoard=null; }
+    if(unsubCours){ unsubCours(); unsubCours=null; }
+    ouvrirAnnalesProf(s);
+  } else if(profActiveTab==='cours'){
+    if(unsubBoard){ unsubBoard(); unsubBoard=null; }
+    if(unsubAnnales){ unsubAnnales(); unsubAnnales=null; }
+    ouvrirCoursProf(classeId, s);
+  } else {
+    if(unsubCours){ unsubCours(); unsubCours=null; }
+    if(unsubAnnales){ unsubAnnales(); unsubAnnales=null; }
+    ecouterTableauClasse(classeId, list => renderBoardProf(list, s));
+  }
+}
+
+// ═══════════════ Annales — prof (limité aux matières qu'il enseigne) ═══════════════
+function ouvrirAnnalesProf(s){
+  const matiereOptions = (s.matieres||[]).map(m=>`<option value="${esc(m)}">${esc(m)}</option>`).join('');
+  document.getElementById('pr-board').innerHTML = `
+    ${annaleFormHtml('pr-an', matiereOptions, 'profAjouterAnnale')}
+    <div class="card">
+      <label class="f-label">📚 Consulter les annales</label>
+      <div style="margin-top:10px">${annalesSectionHtml('pr-an')}</div>
+    </div>
+  `;
+  demarrerEcouteAnnales('pr-an');
 }
 
 function renderBoardProf(list, s){
@@ -955,9 +1355,349 @@ function renderBoardProf(list, s){
   if(!box) return;
   if(!list.length){ box.innerHTML = `<div class="empty">💬 Aucune question dans cette classe pour l'instant.</div>`; return; }
   box.innerHTML = list.map(q=>renderQItem(q, {readonly:false, prof:s})).join('');
+  enhanceOfflineMedia(box);
 }
 
-// ═══════════════ Rendu d'une question (commun élève/prof) ═══════════════
+// ═══════════════ Cours (vidéos) — prof ═══════════════
+function ouvrirCoursProf(classeId, s){
+  const classe = profClasses.find(c=>c.id===classeId);
+  document.getElementById('pr-board').innerHTML = `
+    <div class="card">
+      <label class="f-label">Publier un cours vidéo</label>
+      <div class="field" style="margin-top:8px">
+        <input type="text" id="co-titre" placeholder="Titre du cours (ex : Dérivées — chapitre 3)">
+      </div>
+      <div class="field">
+        <textarea id="co-desc" placeholder="Description ou consignes (facultatif)"></textarea>
+      </div>
+      <div class="field">
+        ${videoInputHtml('co')}
+      </div>
+      <button class="btn btn-primary btn-block" onclick="profPublierCours('${classeId}','${esc(classe?classe.classeName:'').replace(/'/g,"\\'")}')">📤 Publier le cours</button>
+    </div>
+    <div id="co-board"></div>
+  `;
+  ecouterCoursClasse(classeId, list => renderCoursListe(list, s));
+}
+
+window.profPublierCours = async function(classeId, classeName){
+  const s = getSession();
+  if(!s || s.role!=='prof') return;
+  const titre = (document.getElementById('co-titre').value||'').trim();
+  const description = (document.getElementById('co-desc').value||'').trim();
+  if(videoIsUploading('co')){ alert("L'envoi de la vidéo est encore en cours, patientez un instant."); return; }
+  const video = videoHasContent('co') ? videoGetData('co') : null;
+  if(!titre){ alert('Veuillez donner un titre au cours.'); return; }
+  if(!video){ alert('Veuillez joindre la vidéo du cours.'); return; }
+  try{
+    await window.fbAddDoc(window.fbCollection(window.fbDB,'edtxCours'), {
+      classeId, classeName, profNom: s.nom, profCode: s.code,
+      titre, description: description||'', videoUrl: video.url, videoNom: video.nom,
+      createdAt: Date.now()
+    });
+    document.getElementById('co-titre').value = '';
+    document.getElementById('co-desc').value = '';
+    resetVideoState('co');
+  }catch(e){ alert("Erreur de publication : " + (e && e.message ? e.message : e)); }
+};
+
+function renderCoursListe(list, s, boxId){
+  const box = document.getElementById(boxId || 'co-board');
+  if(!box) return;
+  if(!list.length){ box.innerHTML = `<div class="empty">🎥 Aucun cours publié pour l'instant dans cette classe.</div>`; return; }
+  const prof = s && s.role==='prof' ? s : null;
+  box.innerHTML = list.map(c=>renderCoursItem(c, prof)).join('');
+  enhanceOfflineMedia(box);
+}
+
+function renderCoursItem(c, prof){
+  const peutSupprimer = prof && prof.code === c.profCode;
+  return `
+    <div class="card cours-card">
+      <div class="cours-meta">
+        <div class="cours-titre">${esc(c.titre)}</div>
+        ${peutSupprimer?`<button type="button" class="q-del-btn" onclick="supprimerCours('${c.id}')" title="Supprimer ce cours">🗑️</button>`:''}
+      </div>
+      <div class="q-top" style="margin-top:2px"><span class="q-mat">🧑‍🏫 ${esc(c.profNom)}</span><span class="q-time">${fmtTime(c.createdAt)}</span></div>
+      ${c.description ? `<div class="cours-desc">${esc(c.description)}</div>` : ''}
+      ${videoEmbedHtml(c.videoUrl, 'cours-video')}
+    </div>`;
+}
+
+window.supprimerCours = async function(coursId){
+  if(!confirm('Supprimer définitivement ce cours ?')) return;
+  try{
+    await window.fbDeleteDoc(window.fbDoc(window.fbDB,'edtxCours', coursId));
+  }catch(e){ alert('Erreur de suppression : ' + (e && e.message ? e.message : e)); }
+};
+
+let unsubCours = null;
+function ecouterCoursClasse(classeId, cb){
+  if(unsubCours) unsubCours();
+  const qy = window.fbQuery(window.fbCollection(window.fbDB,'edtxCours'), window.fbWhere('classeId','==',classeId));
+  unsubCours = window.fbOnSnapshot(qy, snap=>{
+    const list = snap.docs.map(d=>({ id:d.id, ...d.data() })).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+    cb(list);
+  }, err=>console.warn('cours listener error', err));
+}
+
+// ═══════════════ Annales (bibliothèque d'anciens sujets, par matière/niveau/année) ═══════════════
+const NIVEAUX_SUGGESTIONS = ['7e année','8e année','9e année','10e année','11e année','12e année','Terminale SM','Terminale SE','Terminale SS','BT1','BT2','BTS1','BTS2'];
+const ANNALE_MAX_BYTES = 20 * 1024 * 1024; // 20 Mo (stocké sur Firebase Storage)
+const annaleFileStates = {};
+let annalesCache = [];
+let unsubAnnales = null;
+
+function ecouterAnnales(cb){
+  if(unsubAnnales) unsubAnnales();
+  unsubAnnales = window.fbOnSnapshot(window.fbCollection(window.fbDB,'edtxAnnales'), snap=>{
+    annalesCache = snap.docs.map(d=>({ id:d.id, ...d.data() })).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+    cb(annalesCache);
+  }, err=>console.warn('annales listener error', err));
+}
+
+// ── Formulaire d'ajout (réutilisé prof + administration) ──
+function annaleFormHtml(prefix, matiereOptionsHtml, submitFn){
+  return `
+    <div class="card">
+      <label class="f-label">📚 Ajouter une annale</label>
+      <div class="field" style="margin-top:8px">
+        <select id="${prefix}-an-matiere">
+          <option value="">Choisir une matière...</option>
+          ${matiereOptionsHtml}
+        </select>
+      </div>
+      <div class="field" style="display:flex;gap:8px">
+        <input type="text" id="${prefix}-an-niveau" list="${prefix}-an-niveau-list" placeholder="Niveau (ex : Terminale SM)" style="flex:1">
+        <datalist id="${prefix}-an-niveau-list">${NIVEAUX_SUGGESTIONS.map(n=>`<option value="${esc(n)}">`).join('')}</datalist>
+        <input type="text" id="${prefix}-an-annee" placeholder="Année (ex : 2024-2025)" style="flex:1">
+      </div>
+      <div class="field">
+        <input type="text" id="${prefix}-an-titre" placeholder="Titre du sujet (ex : Devoir n°2 — Cinématique)">
+      </div>
+      <div class="field">
+        <textarea id="${prefix}-an-desc" placeholder="Description ou consignes (facultatif)"></textarea>
+      </div>
+      <div class="field">
+        <label class="file-drop" for="${prefix}-an-file-input">
+          <span>📎 Touchez pour joindre le sujet (image ou PDF)</span>
+        </label>
+        <input type="file" id="${prefix}-an-file-input" accept="image/*,application/pdf" style="display:none" onchange="handleAnnaleFileSelect('${prefix}', this)">
+        <div class="file-hint">Formats acceptés : image (JPG/PNG) ou PDF, 20 Mo max.</div>
+        <div class="upload-progress" id="${prefix}-an-progress" style="display:none">
+          <div class="upload-bar-track"><div class="upload-bar-fill" id="${prefix}-an-bar"></div></div>
+          <div class="upload-status" id="${prefix}-an-status"></div>
+        </div>
+        <div class="file-preview" id="${prefix}-an-file-preview"></div>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="${submitFn}('${prefix}')">📤 Publier l'annale</button>
+    </div>
+  `;
+}
+
+function slugifyAnnaleFileName(name){ return slugifyFileName(name); }
+
+window.handleAnnaleFileSelect = function(prefix, inputEl){
+  const file = inputEl.files && inputEl.files[0];
+  if(!file) return;
+  const isImage = file.type.startsWith('image/');
+  const isPdf = file.type === 'application/pdf';
+  if(!isImage && !isPdf){ alert('Seuls les fichiers image ou PDF sont acceptés.'); inputEl.value=''; return; }
+  if(file.size > ANNALE_MAX_BYTES){ alert('Ce fichier est trop volumineux (20 Mo max).'); inputEl.value=''; return; }
+  if(!fbReady){ alert('Connexion en cours, réessayez dans un instant.'); inputEl.value=''; return; }
+  uploadAnnaleFile(prefix, file, isImage ? 'image' : 'pdf');
+  inputEl.value = '';
+};
+
+function uploadAnnaleFile(prefix, file, type){
+  const progWrap = document.getElementById(prefix+'-an-progress');
+  const bar = document.getElementById(prefix+'-an-bar');
+  const status = document.getElementById(prefix+'-an-status');
+  const preview = document.getElementById(prefix+'-an-file-preview');
+  if(preview){ preview.style.display='none'; preview.innerHTML=''; }
+  if(progWrap) progWrap.style.display='block';
+  if(bar) bar.style.width='0%';
+  if(status) status.textContent = 'Envoi en cours… 0 %';
+  const path = 'edtxAnnales/' + Date.now() + '_' + slugifyAnnaleFileName(file.name);
+  const sref = window.fbStorageRef(window.fbStorage, path);
+  const task = window.fbUploadBytesResumable(sref, file, { contentType: file.type });
+  annaleFileStates[prefix] = { uploading:true, task, path };
+  task.on('state_changed',
+    snap=>{
+      const pct = snap.totalBytes ? Math.round((snap.bytesTransferred/snap.totalBytes)*100) : 0;
+      if(bar) bar.style.width = pct+'%';
+      if(status) status.textContent = `Envoi en cours… ${pct} %`;
+    },
+    err=>{
+      annaleFileStates[prefix] = null;
+      if(progWrap) progWrap.style.display='none';
+      alert("Erreur d'envoi du fichier : " + (err && err.message ? err.message : err));
+    },
+    async ()=>{
+      try{
+        const url = await window.fbGetDownloadURL(task.snapshot.ref);
+        annaleFileStates[prefix] = { uploading:false, url, nom:file.name, type, path };
+        if(status) status.textContent = '✅ Fichier envoyé';
+        renderAnnaleFilePreview(prefix);
+      }catch(err){
+        annaleFileStates[prefix] = null;
+        if(progWrap) progWrap.style.display='none';
+        alert("Erreur d'envoi du fichier : " + (err && err.message ? err.message : err));
+      }
+    }
+  );
+}
+
+function renderAnnaleFilePreview(prefix){
+  const box = document.getElementById(prefix+'-an-file-preview');
+  if(!box) return;
+  const st = annaleFileStates[prefix];
+  if(!st || !st.url){ box.style.display='none'; box.innerHTML=''; return; }
+  box.style.display='flex';
+  box.innerHTML = `<span style="font-size:12.5px;font-weight:700;color:var(--ink)">${st.type==='image'?'🖼️':'📄'} ${esc(st.nom)}</span><button type="button" class="btn-mini" onclick="deleteAnnaleFileAttachment('${prefix}')">🗑️ Supprimer</button>`;
+}
+
+window.deleteAnnaleFileAttachment = function(prefix){
+  const st = annaleFileStates[prefix];
+  annaleFileStates[prefix] = null;
+  const progWrap = document.getElementById(prefix+'-an-progress');
+  if(progWrap) progWrap.style.display='none';
+  renderAnnaleFilePreview(prefix);
+  if(st && st.path && st.url){
+    try{ window.fbDeleteObject(window.fbStorageRef(window.fbStorage, st.path)); }catch(e){}
+  }
+};
+
+function annaleFileIsUploading(prefix){ const st = annaleFileStates[prefix]; return !!(st && st.uploading); }
+function annaleFileHasContent(prefix){ const st = annaleFileStates[prefix]; return !!(st && st.url); }
+function annaleFileGetData(prefix){ const st = annaleFileStates[prefix]; return st && st.url ? { url:st.url, nom:st.nom, type:st.type, path:st.path } : null; }
+function resetAnnaleFileState(prefix){
+  annaleFileStates[prefix] = null;
+  const progWrap = document.getElementById(prefix+'-an-progress');
+  if(progWrap) progWrap.style.display='none';
+  renderAnnaleFilePreview(prefix);
+}
+
+// ── Ajout par un professeur (matière limitée à celles qu'il enseigne) ──
+window.profAjouterAnnale = async function(prefix){
+  const s = getSession();
+  if(!s || s.role!=='prof') return;
+  await soumettreAnnale(prefix, { auteurNom: s.nom, auteurRole:'prof', profCode: s.code });
+};
+
+// ── Ajout par l'administration ──
+window.adminAjouterAnnale = async function(prefix){
+  await soumettreAnnale(prefix, { auteurNom: 'Administration', auteurRole:'admin', profCode: null });
+};
+
+async function soumettreAnnale(prefix, auteur){
+  const matiere = (document.getElementById(prefix+'-an-matiere').value||'').trim();
+  const niveau = (document.getElementById(prefix+'-an-niveau').value||'').trim();
+  const annee = (document.getElementById(prefix+'-an-annee').value||'').trim();
+  const titre = (document.getElementById(prefix+'-an-titre').value||'').trim();
+  const description = (document.getElementById(prefix+'-an-desc').value||'').trim();
+  if(annaleFileIsUploading(prefix)){ alert("L'envoi du fichier est encore en cours, patientez un instant."); return; }
+  const fichier = annaleFileHasContent(prefix) ? annaleFileGetData(prefix) : null;
+  if(!matiere){ alert('Veuillez choisir une matière.'); return; }
+  if(!niveau){ alert('Veuillez indiquer le niveau.'); return; }
+  if(!annee){ alert("Veuillez indiquer l'année."); return; }
+  if(!titre){ alert('Veuillez donner un titre au sujet.'); return; }
+  if(!fichier){ alert('Veuillez joindre le fichier du sujet (image ou PDF).'); return; }
+  try{
+    await window.fbAddDoc(window.fbCollection(window.fbDB,'edtxAnnales'), {
+      matiere, niveau, annee, titre, description: description||'',
+      fichierUrl: fichier.url, fichierNom: fichier.nom, fichierType: fichier.type, fichierPath: fichier.path,
+      auteurNom: auteur.auteurNom, auteurRole: auteur.auteurRole, profCode: auteur.profCode||null,
+      createdAt: Date.now()
+    });
+    ['an-matiere','an-niveau','an-annee','an-titre','an-desc'].forEach(k=>{ const el = document.getElementById(prefix+'-'+k); if(el) el.value=''; });
+    resetAnnaleFileState(prefix);
+  }catch(e){ alert('Erreur de publication : ' + (e && e.message ? e.message : e)); }
+}
+
+window.supprimerAnnale = async function(annaleId){
+  if(!confirm('Supprimer définitivement cette annale ?')) return;
+  const a = annalesCache.find(x=>x.id===annaleId);
+  try{
+    await window.fbDeleteDoc(window.fbDoc(window.fbDB,'edtxAnnales', annaleId));
+    if(a && a.fichierPath){ try{ window.fbDeleteObject(window.fbStorageRef(window.fbStorage, a.fichierPath)); }catch(e){} }
+  }catch(e){ alert('Erreur de suppression : ' + (e && e.message ? e.message : e)); }
+};
+
+// ── Filtres + liste (partagés élève / prof / admin) ──
+function annaleFiltersHtml(prefix){
+  return `
+    <div class="annale-filters">
+      <select id="${prefix}-f-matiere" onchange="appliquerFiltresAnnales('${prefix}')"><option value="">Toutes les matières</option></select>
+      <input type="text" id="${prefix}-f-niveau" placeholder="Niveau..." oninput="appliquerFiltresAnnales('${prefix}')">
+      <input type="text" id="${prefix}-f-annee" placeholder="Année..." oninput="appliquerFiltresAnnales('${prefix}')">
+    </div>
+  `;
+}
+
+// Bloc complet filtres + liste, prêt à insérer dans n'importe quel écran (élève/prof/admin)
+function annalesSectionHtml(prefix){
+  return `${annaleFiltersHtml(prefix)}<div id="${prefix}-list"></div>`;
+}
+
+// Démarre (ou redémarre) l'écoute Firestore + peuple le(s) filtre(s) matières pour un préfixe donné
+function demarrerEcouteAnnales(prefix, extraMatiereSelectIds){
+  const ids = [prefix+'-f-matiere'].concat(extraMatiereSelectIds||[]);
+  chargerMatieresDansSelect(ids);
+  ecouterAnnales(()=> appliquerFiltresAnnales(prefix));
+}
+
+window.appliquerFiltresAnnales = function(prefix){
+  const matiere = (document.getElementById(prefix+'-f-matiere')||{}).value || '';
+  const niveau = ((document.getElementById(prefix+'-f-niveau')||{}).value || '').trim().toLowerCase();
+  const annee = ((document.getElementById(prefix+'-f-annee')||{}).value || '').trim().toLowerCase();
+  const filtered = annalesCache.filter(a=>
+    (!matiere || a.matiere===matiere) &&
+    (!niveau || (a.niveau||'').toLowerCase().includes(niveau)) &&
+    (!annee || (a.annee||'').toLowerCase().includes(annee))
+  );
+  let peutSupprimerFn = ()=>false;
+  if(prefix==='pr-an'){
+    const s = getSession();
+    peutSupprimerFn = (a)=> !!(s && s.role==='prof' && a.auteurRole==='prof' && a.profCode===s.code);
+  } else if(prefix==='ad-an'){
+    peutSupprimerFn = ()=>true;
+  }
+  renderAnnalesListe(filtered, prefix+'-list', { peutSupprimer: peutSupprimerFn });
+};
+
+function renderAnnalesListe(list, boxId, opts){
+  opts = opts || {};
+  const box = document.getElementById(boxId);
+  if(!box) return;
+  if(!list.length){ box.innerHTML = `<div class="empty">📚 Aucune annale ne correspond à ces critères pour l'instant.</div>`; return; }
+  const peutSupprimerFn = typeof opts.peutSupprimer === 'function' ? opts.peutSupprimer : ()=>false;
+  box.innerHTML = list.map(a=>renderAnnaleItem(a, peutSupprimerFn(a))).join('');
+  enhanceOfflineMedia(box);
+}
+
+function renderAnnaleItem(a, peutSupprimer){
+  return `
+    <div class="card">
+      <div class="annale-tags">
+        <span class="annale-tag annale-tag-matiere">${esc(a.matiere)}</span>
+        <span class="annale-tag annale-tag-niveau">${esc(a.niveau)}</span>
+        <span class="annale-tag annale-tag-annee">${esc(a.annee)}</span>
+      </div>
+      <div class="annale-titre">${esc(a.titre)}</div>
+      ${a.description ? `<div class="annale-desc">${esc(a.description)}</div>` : ''}
+      ${a.fichierType==='image'
+        ? `<a href="${a.fichierUrl}" target="_blank" rel="noopener" data-media-url="${esc(a.fichierUrl)}" data-media-kind="image"><img class="annale-img-prev" src="${a.fichierUrl}" alt="Sujet"></a>`
+        : `<a class="annale-file-link" href="${a.fichierUrl}" target="_blank" rel="noopener" data-media-url="${esc(a.fichierUrl)}" data-media-kind="file">📄 ${esc(a.fichierNom)}</a>`}
+      <div class="media-offline-slot"></div>
+      <div class="annale-meta">
+        <span class="q-time">${a.auteurRole==='admin'?'🛠️':'🧑‍🏫'} ${esc(a.auteurNom)} · ${fmtTime(a.createdAt)}</span>
+        ${peutSupprimer?`<button type="button" class="q-del-btn" onclick="supprimerAnnale('${a.id}')" title="Supprimer cette annale">🗑️</button>`:''}
+      </div>
+    </div>`;
+}
+
+
 function renderQItem(q, opts){
   const reponses = q.reponses || [];
   const answered = reponses.length>0;
@@ -971,13 +1711,17 @@ function renderQItem(q, opts){
       ${r.texte ? `<div class="r-text">${esc(r.texte)}</div>` : ''}
       ${r.dessin ? `<img class="r-dessin-img" src="${r.dessin}" alt="Dessin de réponse">` : ''}
       ${r.audio ? `<audio class="r-audio" controls src="${r.audio}"></audio>` : ''}
+      ${r.fichier ? (r.fichier.type==='image'
+        ? `<img class="r-dessin-img" src="${r.fichier.dataUrl}" alt="Pièce jointe">`
+        : `<a class="r-fichier-link" href="${r.fichier.dataUrl}" download="${esc(r.fichier.nom)}">📄 ${esc(r.fichier.nom)}</a>`) : ''}
+      ${r.video ? videoEmbedHtml(r.video.url, 'r-video') : ''}
     </div>`).join('');
   let ansFormHtml = '';
   if(peutRepondre){
     const ansPrefix = 'ans-'+q.id;
     ansFormHtml = `
       <div class="ans-form">
-        ${composerHtml(ansPrefix,'Votre réponse...')}
+        ${composerHtml(ansPrefix,'Votre réponse...',{allowVideo:true})}
         <button class="btn btn-primary btn-block composer-send" onclick="profRepondre('${q.id}')">Répondre</button>
       </div>`;
   } else if(!opts.readonly && !answered){
@@ -990,6 +1734,9 @@ function renderQItem(q, opts){
       ${q.question ? `<div class="q-text">${esc(q.question)}</div>` : ''}
       ${q.dessin ? `<img class="q-dessin-img" src="${q.dessin}" alt="Dessin de la question">` : ''}
       ${q.audio ? `<audio class="q-audio" controls src="${q.audio}"></audio>` : ''}
+      ${q.fichier ? (q.fichier.type==='image'
+        ? `<img class="q-dessin-img" src="${q.fichier.dataUrl}" alt="Sujet joint">`
+        : `<a class="q-fichier-link" href="${q.fichier.dataUrl}" download="${esc(q.fichier.nom)}">📄 ${esc(q.fichier.nom)}</a>`) : ''}
       ${reponsesHtml}
       ${ansFormHtml}
     </div>`;
@@ -1002,15 +1749,20 @@ window.profRepondre = async function(qId){
   const texte = (document.getElementById(prefix+'-text').value||'').trim();
   const dessin = canvasHasContent(prefix+'-canvas') ? canvasToDataURL(prefix+'-canvas') : null;
   const audio = audioHasContent(prefix) ? audioToDataURL(prefix) : null;
-  if(!texte && !dessin && !audio){ alert('Veuillez écrire une réponse, faire un dessin ou enregistrer un message vocal.'); return; }
+  const fichier = fileHasContent(prefix) ? fileGetData(prefix) : null;
+  if(videoIsUploading(prefix)){ alert("L'envoi de la vidéo est encore en cours, patientez un instant."); return; }
+  const video = videoHasContent(prefix) ? videoGetData(prefix) : null;
+  if(!texte && !dessin && !audio && !fichier && !video){ alert('Veuillez écrire une réponse, faire un dessin, enregistrer un message vocal, joindre un fichier ou une vidéo.'); return; }
   try{
     const ref = window.fbDoc(window.fbDB,'edtxTableau', qId);
     const snap = await window.fbGetDoc(ref);
     if(!snap.exists()) return;
     const reponses = snap.data().reponses || [];
-    reponses.push({ profNom: s.nom, profCode: s.code, texte: texte||'', dessin: dessin||null, audio: audio||null, createdAt: Date.now() });
+    reponses.push({ profNom: s.nom, profCode: s.code, texte: texte||'', dessin: dessin||null, audio: audio||null, fichier: fichier||null, video: video||null, createdAt: Date.now() });
     await window.fbUpdateDoc(ref, { reponses });
     resetAudioState(prefix);
+    resetFileState(prefix);
+    resetVideoState(prefix);
   }catch(e){ alert('Erreur : ' + (e && e.message ? e.message : e)); }
 };
 
@@ -1085,10 +1837,16 @@ function renderAdminPanel(){
       </div>
     </div>
     <div id="ad-classes"></div>
+    ${annaleFormHtml('ad-an', '', 'adminAjouterAnnale')}
+    <div class="card">
+      <label class="f-label">📚 Toutes les annales</label>
+      <div style="margin-top:10px">${annalesSectionHtml('ad-an')}</div>
+    </div>
   `);
   const linkEl = document.getElementById('ad-install-link');
   if(linkEl) linkEl.textContent = buildInstallLink();
   chargerClassesAdmin();
+  demarrerEcouteAnnales('ad-an', ['ad-an-matiere']);
 }
 
 // ── Lien d'installation de l'application (PWA) ──
@@ -1258,6 +2016,105 @@ window.partagerLienEleveEmail = function(token, eleveNom, classeName){
   const corps = encodeURIComponent(`Bonjour ${eleveNom},\n\nVoici ton lien personnel pour accéder au Tableau d'échange de la classe ${classeName} et poser tes questions aux professeurs :\n\n${buildEleveLink(token)}`);
   window.open(`mailto:?subject=${sujet}&body=${corps}`, '_blank');
 };
+
+// ═══════════════ Mode hors-ligne : cache des vidéos/fiches déjà consultées ═══════════════
+// Utilise le Cache Storage du navigateur (indépendant du Service Worker) pour enregistrer
+// une copie locale de chaque vidéo/fiche au moment où elle est réellement ouverte/lue,
+// afin d'économiser la donnée sur les connexions instables (Mamou) tout en permettant
+// de revoir ce qui a déjà été consulté sans réseau.
+const MEDIA_CACHE_NAME = 'edtx-media-v1';
+const MEDIA_MAX_BYTES = 200 * 1024 * 1024; // 200 Mo max de contenu hors-ligne (le plus ancien est purgé au-delà)
+
+function mediaIndexLoad(){ try{ return JSON.parse(localStorage.getItem('edtxMediaIndex')||'[]'); }catch(e){ return []; } }
+function mediaIndexSave(idx){ try{ localStorage.setItem('edtxMediaIndex', JSON.stringify(idx)); }catch(e){} }
+function mediaIndexTotal(idx){ return idx.reduce((s,e)=>s+(e.bytes||0),0); }
+
+async function enforceMediaQuota(cache){
+  const idx = mediaIndexLoad().sort((a,b)=>a.ts-b.ts); // le plus ancien d'abord
+  while(mediaIndexTotal(idx) > MEDIA_MAX_BYTES && idx.length){
+    const oldest = idx.shift();
+    try{ await cache.delete(oldest.url); }catch(e){}
+  }
+  mediaIndexSave(idx);
+}
+
+async function cacheMediaUrl(url){
+  if(!url || !('caches' in window)) return;
+  if(url.startsWith('data:') || url.startsWith('blob:')) return;
+  if(extractYouTubeId(url)) return; // vidéo YouTube : reste en streaming, pas de copie locale
+  try{
+    const cache = await caches.open(MEDIA_CACHE_NAME);
+    if(await cache.match(url)) return;
+    const resp = await fetch(url, { mode:'cors' });
+    if(!resp || !resp.ok) return;
+    await cache.put(url, resp.clone());
+    const bytes = Number(resp.headers.get('content-length')) || 0;
+    const idx = mediaIndexLoad();
+    idx.push({ url, bytes, ts: Date.now() });
+    mediaIndexSave(idx);
+    await enforceMediaQuota(cache);
+    markMediaBadge(url);
+  }catch(e){ /* connexion instable : on retentera à la prochaine consultation */ }
+}
+
+function addOfflineBadge(el){
+  const host = el.closest('.card') || el.parentElement;
+  if(!host || host.querySelector('.media-offline-badge')) return;
+  const badge = document.createElement('span');
+  badge.className = 'media-offline-badge';
+  badge.textContent = '📥 disponible hors-ligne';
+  el.insertAdjacentElement('afterend', badge);
+}
+function markMediaBadge(url){
+  document.querySelectorAll('[data-media-url]').forEach(el=>{ if(el.dataset.mediaUrl===url) addOfflineBadge(el); });
+}
+
+async function enhanceOfflineMedia(scope){
+  if(!('caches' in window)) return;
+  const els = (scope||document).querySelectorAll('[data-media-url]');
+  if(!els.length) return;
+  let cache; try{ cache = await caches.open(MEDIA_CACHE_NAME); }catch(e){ return; }
+  for(const el of els){
+    const url = el.dataset.mediaUrl, kind = el.dataset.mediaKind;
+    const cached = await cache.match(url).catch(()=>null);
+    if(cached){
+      addOfflineBadge(el);
+      if(!navigator.onLine){
+        try{
+          const blobUrl = URL.createObjectURL(await cached.blob());
+          if(kind==='video'){ el.src = blobUrl; }
+          else if(kind==='image'){ el.href = blobUrl; const img = el.querySelector('img'); if(img) img.src = blobUrl; }
+          else { el.href = blobUrl; }
+        }catch(e){}
+      }
+    } else if(kind==='image' && navigator.onLine){
+      // La vignette de la fiche est de toute façon déjà téléchargée pour l'aperçu : autant la
+      // garder hors-ligne, sans coût de donnée supplémentaire.
+      cacheMediaUrl(url);
+    }
+  }
+}
+
+// Mise en cache déclenchée par la consultation réelle : lecture d'une vidéo, ouverture d'une fiche/PDF
+document.addEventListener('play', (e)=>{
+  const t = e.target;
+  if(t && t.tagName==='VIDEO' && t.dataset && t.dataset.mediaUrl) cacheMediaUrl(t.dataset.mediaUrl);
+}, true);
+document.addEventListener('click', (e)=>{
+  const a = e.target.closest && e.target.closest('[data-media-url][data-media-kind="file"]');
+  if(a) cacheMediaUrl(a.dataset.mediaUrl);
+}, true);
+
+// Bannière « hors-ligne » + bascule des médias déjà en cache vers leur copie locale
+function updateOfflineBanner(){
+  const banner = document.getElementById('offline-banner');
+  if(!banner) return;
+  banner.style.display = navigator.onLine ? 'none' : 'block';
+  if(!navigator.onLine) enhanceOfflineMedia(document);
+}
+window.addEventListener('online', updateOfflineBanner);
+window.addEventListener('offline', updateOfflineBanner);
+updateOfflineBanner();
 
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
