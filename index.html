@@ -822,9 +822,10 @@ function resetVideoState(prefix){
   renderVideoPreview(prefix);
 }
 
-// ── Document PDF joint à un cours (Firebase Storage, comme les annales) ──
+// ── Document PDF joint à un cours (stocké en base64 dans Firestore, comme les
+// pièces jointes aux questions — Firebase Storage n'est pas disponible sur le
+// forfait Spark de ce projet, d'où la limite plus basse que les vidéos/annales) ──
 const coursDocStates = {};
-const COURS_DOC_MAX_BYTES = 20 * 1024 * 1024; // 20 Mo
 
 function coursDocInputHtml(prefix){
   return `
@@ -833,90 +834,45 @@ function coursDocInputHtml(prefix){
         <span>📄 Touchez pour joindre un document PDF (facultatif)</span>
       </label>
       <input type="file" id="${prefix}-doc-input" accept="application/pdf" style="display:none" onchange="handleCoursDocSelect('${prefix}', this)">
-      <div class="file-hint">PDF uniquement, 20 Mo max. Les élèves pourront le télécharger.</div>
-      <div class="upload-progress" id="${prefix}-doc-progress" style="display:none">
-        <div class="upload-bar-track"><div class="upload-bar-fill" id="${prefix}-doc-bar"></div></div>
-        <div class="upload-status" id="${prefix}-doc-status"></div>
-      </div>
+      <div class="file-hint">PDF uniquement, 650 Ko max. Les élèves pourront le télécharger.</div>
       <div class="file-preview" id="${prefix}-doc-preview"></div>
     </div>
   `;
 }
 
-window.handleCoursDocSelect = function(prefix, inputEl){
+window.handleCoursDocSelect = async function(prefix, inputEl){
   const file = inputEl.files && inputEl.files[0];
   if(!file) return;
   if(file.type !== 'application/pdf'){ alert('Seuls les fichiers PDF sont acceptés.'); inputEl.value=''; return; }
-  if(file.size > COURS_DOC_MAX_BYTES){ alert('Ce PDF est trop volumineux (20 Mo max).'); inputEl.value=''; return; }
-  uploadCoursDoc(prefix, file);
+  if(file.size > PDF_MAX_BYTES){ alert('Ce PDF est trop volumineux. Merci de joindre un fichier de moins de 650 Ko.'); inputEl.value=''; return; }
+  try{
+    const dataUrl = await readFileAsDataUrl(file);
+    coursDocStates[prefix] = { dataUrl, nom:file.name };
+    renderCoursDocPreview(prefix);
+  }catch(err){
+    alert("Erreur de lecture du fichier : " + (err && err.message ? err.message : err));
+  }
   inputEl.value = '';
 };
-
-function uploadCoursDoc(prefix, file){
-  const progWrap = document.getElementById(prefix+'-doc-progress');
-  const bar = document.getElementById(prefix+'-doc-bar');
-  const status = document.getElementById(prefix+'-doc-status');
-  const preview = document.getElementById(prefix+'-doc-preview');
-  if(preview){ preview.style.display='none'; preview.innerHTML=''; }
-  if(progWrap) progWrap.style.display='block';
-  if(bar) bar.style.width='0%';
-  if(status) status.textContent = 'Envoi en cours… 0 %';
-  const path = 'edtxCoursDocs/' + Date.now() + '_' + slugifyFileName(file.name);
-  const sref = window.fbStorageRef(window.fbStorage, path);
-  const task = window.fbUploadBytesResumable(sref, file, { contentType: file.type });
-  coursDocStates[prefix] = { uploading:true, task, path };
-  task.on('state_changed',
-    snap=>{
-      const pct = snap.totalBytes ? Math.round((snap.bytesTransferred/snap.totalBytes)*100) : 0;
-      if(bar) bar.style.width = pct+'%';
-      if(status) status.textContent = `Envoi en cours… ${pct} %`;
-    },
-    err=>{
-      coursDocStates[prefix] = null;
-      if(progWrap) progWrap.style.display='none';
-      alert("Erreur d'envoi du document : " + (err && err.message ? err.message : err));
-    },
-    async ()=>{
-      try{
-        const url = await window.fbGetDownloadURL(task.snapshot.ref);
-        coursDocStates[prefix] = { uploading:false, url, nom:file.name, path };
-        if(status) status.textContent = '✅ Document envoyé';
-        renderCoursDocPreview(prefix);
-      }catch(err){
-        coursDocStates[prefix] = null;
-        alert("Erreur d'envoi du document : " + (err && err.message ? err.message : err));
-      }
-      if(progWrap) setTimeout(()=>{ if(progWrap) progWrap.style.display='none'; }, 600);
-    }
-  );
-}
 
 function renderCoursDocPreview(prefix){
   const box = document.getElementById(prefix+'-doc-preview');
   if(!box) return;
   const st = coursDocStates[prefix];
-  if(!st || !st.url){ box.style.display='none'; box.innerHTML=''; return; }
+  if(!st || !st.dataUrl){ box.style.display='none'; box.innerHTML=''; return; }
   box.style.display='flex';
   box.innerHTML = `<span style="font-size:12.5px;font-weight:700;color:var(--ink)">📄 ${esc(st.nom)}</span><button type="button" class="btn-mini" onclick="deleteCoursDocAttachment('${prefix}')">🗑️ Supprimer</button>`;
 }
 
 window.deleteCoursDocAttachment = function(prefix){
-  const st = coursDocStates[prefix];
   coursDocStates[prefix] = null;
-  const progWrap = document.getElementById(prefix+'-doc-progress');
-  if(progWrap) progWrap.style.display='none';
   renderCoursDocPreview(prefix);
-  if(st && st.path && st.url){
-    try{ window.fbDeleteObject(window.fbStorageRef(window.fbStorage, st.path)); }catch(e){}
-  }
 };
 
-function coursDocHasContent(prefix){ const st = coursDocStates[prefix]; return !!(st && st.url); }
-function coursDocGetData(prefix){ const st = coursDocStates[prefix]; return st && st.url ? { url:st.url, nom:st.nom } : null; }
+function coursDocHasContent(prefix){ const st = coursDocStates[prefix]; return !!(st && st.dataUrl); }
+function coursDocGetData(prefix){ const st = coursDocStates[prefix]; return st && st.dataUrl ? { url:st.dataUrl, nom:st.nom } : null; }
 function resetCoursDocState(prefix){
   coursDocStates[prefix] = null;
-  const progWrap = document.getElementById(prefix+'-doc-progress');
-  if(progWrap) progWrap.style.display='none';
   renderCoursDocPreview(prefix);
 }
 
@@ -1561,7 +1517,7 @@ function renderCoursItem(c, prof){
       <div class="q-top" style="margin-top:2px"><span class="q-mat">🧑‍🏫 ${esc(c.profNom)}</span><span class="q-time">${fmtTime(c.createdAt)}</span></div>
       ${c.description ? `<div class="cours-desc">${esc(c.description)}</div>` : ''}
       ${c.videoUrl ? videoEmbedHtml(c.videoUrl, 'cours-video') : ''}
-      ${c.documentUrl ? `<button type="button" class="annale-file-link" style="border:none;cursor:pointer" onclick="forceDownloadFile('${esc(c.documentUrl)}','${esc(c.documentNom||'document.pdf')}')">📥 Télécharger ${esc(c.documentNom||'le document PDF')}</button>` : ''}
+      ${c.documentUrl ? `<a class="annale-file-link" href="${c.documentUrl}" download="${esc(c.documentNom||'document.pdf')}">📥 ${esc(c.documentNom||'Télécharger le document PDF')}</a>` : ''}
     </div>`;
 }
 
@@ -1584,7 +1540,10 @@ function ecouterCoursClasse(classeId, cb){
 
 // ═══════════════ Annales (bibliothèque d'anciens sujets, par matière/niveau/année) ═══════════════
 const NIVEAUX_SUGGESTIONS = ['7e année','8e année','9e année','10e année','11e année','12e année','Terminale SM','Terminale SE','Terminale SS','BT1','BT2','BTS1','BTS2'];
-const ANNALE_MAX_BYTES = 20 * 1024 * 1024; // 20 Mo (stocké sur Firebase Storage)
+// ── Annales : stockées en base64 dans Firestore (comme les pièces jointes aux
+// questions et le PDF de cours) — Firebase Storage n'est pas disponible sur le
+// forfait Spark de ce projet. Limite plus basse en conséquence. ──
+const ANNALE_IMAGE_MAX_BYTES = 5 * 1024 * 1024; // 5 Mo à la sélection, avant compression
 const annaleFileStates = {};
 let annalesCache = [];
 let unsubAnnales = null;
@@ -1624,11 +1583,7 @@ function annaleFormHtml(prefix, matiereOptionsHtml, submitFn){
           <span>📎 Touchez pour joindre le sujet (image ou PDF)</span>
         </label>
         <input type="file" id="${prefix}-an-file-input" accept="image/*,application/pdf" style="display:none" onchange="handleAnnaleFileSelect('${prefix}', this)">
-        <div class="file-hint">Formats acceptés : image (JPG/PNG) ou PDF, 20 Mo max.</div>
-        <div class="upload-progress" id="${prefix}-an-progress" style="display:none">
-          <div class="upload-bar-track"><div class="upload-bar-fill" id="${prefix}-an-bar"></div></div>
-          <div class="upload-status" id="${prefix}-an-status"></div>
-        </div>
+        <div class="file-hint">Image (JPG/PNG, sera compressée) ou PDF (650 Ko max).</div>
         <div class="file-preview" id="${prefix}-an-file-preview"></div>
       </div>
       <button class="btn btn-primary btn-block" onclick="${submitFn}('${prefix}')">📤 Publier l'annale</button>
@@ -1636,86 +1591,47 @@ function annaleFormHtml(prefix, matiereOptionsHtml, submitFn){
   `;
 }
 
-function slugifyAnnaleFileName(name){ return slugifyFileName(name); }
-
-window.handleAnnaleFileSelect = function(prefix, inputEl){
+window.handleAnnaleFileSelect = async function(prefix, inputEl){
   const file = inputEl.files && inputEl.files[0];
   if(!file) return;
   const isImage = file.type.startsWith('image/');
   const isPdf = file.type === 'application/pdf';
   if(!isImage && !isPdf){ alert('Seuls les fichiers image ou PDF sont acceptés.'); inputEl.value=''; return; }
-  if(file.size > ANNALE_MAX_BYTES){ alert('Ce fichier est trop volumineux (20 Mo max).'); inputEl.value=''; return; }
-  if(!fbReady){ alert('Connexion en cours, réessayez dans un instant.'); inputEl.value=''; return; }
-  uploadAnnaleFile(prefix, file, isImage ? 'image' : 'pdf');
+  try{
+    if(isImage){
+      if(file.size > ANNALE_IMAGE_MAX_BYTES){ alert('Cette image est trop volumineuse (5 Mo max).'); inputEl.value=''; return; }
+      const dataUrl = await compressImageFile(file);
+      annaleFileStates[prefix] = { dataUrl, nom:file.name, type:'image' };
+    } else {
+      if(file.size > PDF_MAX_BYTES){ alert('Ce PDF est trop volumineux. Merci de joindre un fichier de moins de 650 Ko (ou une photo des pages).'); inputEl.value=''; return; }
+      const dataUrl = await readFileAsDataUrl(file);
+      annaleFileStates[prefix] = { dataUrl, nom:file.name, type:'pdf' };
+    }
+    renderAnnaleFilePreview(prefix);
+  }catch(err){
+    alert("Erreur de lecture du fichier : " + (err && err.message ? err.message : err));
+  }
   inputEl.value = '';
 };
-
-function uploadAnnaleFile(prefix, file, type){
-  const progWrap = document.getElementById(prefix+'-an-progress');
-  const bar = document.getElementById(prefix+'-an-bar');
-  const status = document.getElementById(prefix+'-an-status');
-  const preview = document.getElementById(prefix+'-an-file-preview');
-  if(preview){ preview.style.display='none'; preview.innerHTML=''; }
-  if(progWrap) progWrap.style.display='block';
-  if(bar) bar.style.width='0%';
-  if(status) status.textContent = 'Envoi en cours… 0 %';
-  const path = 'edtxAnnales/' + Date.now() + '_' + slugifyAnnaleFileName(file.name);
-  const sref = window.fbStorageRef(window.fbStorage, path);
-  const task = window.fbUploadBytesResumable(sref, file, { contentType: file.type });
-  annaleFileStates[prefix] = { uploading:true, task, path };
-  task.on('state_changed',
-    snap=>{
-      const pct = snap.totalBytes ? Math.round((snap.bytesTransferred/snap.totalBytes)*100) : 0;
-      if(bar) bar.style.width = pct+'%';
-      if(status) status.textContent = `Envoi en cours… ${pct} %`;
-    },
-    err=>{
-      annaleFileStates[prefix] = null;
-      if(progWrap) progWrap.style.display='none';
-      alert("Erreur d'envoi du fichier : " + (err && err.message ? err.message : err));
-    },
-    async ()=>{
-      try{
-        const url = await window.fbGetDownloadURL(task.snapshot.ref);
-        annaleFileStates[prefix] = { uploading:false, url, nom:file.name, type, path };
-        if(status) status.textContent = '✅ Fichier envoyé';
-        renderAnnaleFilePreview(prefix);
-      }catch(err){
-        annaleFileStates[prefix] = null;
-        if(progWrap) progWrap.style.display='none';
-        alert("Erreur d'envoi du fichier : " + (err && err.message ? err.message : err));
-      }
-    }
-  );
-}
 
 function renderAnnaleFilePreview(prefix){
   const box = document.getElementById(prefix+'-an-file-preview');
   if(!box) return;
   const st = annaleFileStates[prefix];
-  if(!st || !st.url){ box.style.display='none'; box.innerHTML=''; return; }
+  if(!st || !st.dataUrl){ box.style.display='none'; box.innerHTML=''; return; }
   box.style.display='flex';
   box.innerHTML = `<span style="font-size:12.5px;font-weight:700;color:var(--ink)">${st.type==='image'?'🖼️':'📄'} ${esc(st.nom)}</span><button type="button" class="btn-mini" onclick="deleteAnnaleFileAttachment('${prefix}')">🗑️ Supprimer</button>`;
 }
 
 window.deleteAnnaleFileAttachment = function(prefix){
-  const st = annaleFileStates[prefix];
   annaleFileStates[prefix] = null;
-  const progWrap = document.getElementById(prefix+'-an-progress');
-  if(progWrap) progWrap.style.display='none';
   renderAnnaleFilePreview(prefix);
-  if(st && st.path && st.url){
-    try{ window.fbDeleteObject(window.fbStorageRef(window.fbStorage, st.path)); }catch(e){}
-  }
 };
 
-function annaleFileIsUploading(prefix){ const st = annaleFileStates[prefix]; return !!(st && st.uploading); }
-function annaleFileHasContent(prefix){ const st = annaleFileStates[prefix]; return !!(st && st.url); }
-function annaleFileGetData(prefix){ const st = annaleFileStates[prefix]; return st && st.url ? { url:st.url, nom:st.nom, type:st.type, path:st.path } : null; }
+function annaleFileHasContent(prefix){ const st = annaleFileStates[prefix]; return !!(st && st.dataUrl); }
+function annaleFileGetData(prefix){ const st = annaleFileStates[prefix]; return st && st.dataUrl ? { url:st.dataUrl, nom:st.nom, type:st.type } : null; }
 function resetAnnaleFileState(prefix){
   annaleFileStates[prefix] = null;
-  const progWrap = document.getElementById(prefix+'-an-progress');
-  if(progWrap) progWrap.style.display='none';
   renderAnnaleFilePreview(prefix);
 }
 
@@ -1737,7 +1653,6 @@ async function soumettreAnnale(prefix, auteur){
   const annee = (document.getElementById(prefix+'-an-annee').value||'').trim();
   const titre = (document.getElementById(prefix+'-an-titre').value||'').trim();
   const description = (document.getElementById(prefix+'-an-desc').value||'').trim();
-  if(annaleFileIsUploading(prefix)){ alert("L'envoi du fichier est encore en cours, patientez un instant."); return; }
   const fichier = annaleFileHasContent(prefix) ? annaleFileGetData(prefix) : null;
   if(!matiere){ alert('Veuillez choisir une matière.'); return; }
   if(!niveau){ alert('Veuillez indiquer le niveau.'); return; }
@@ -1747,7 +1662,7 @@ async function soumettreAnnale(prefix, auteur){
   try{
     await window.fbAddDoc(window.fbCollection(window.fbDB,'edtxAnnales'), {
       matiere, niveau, annee, titre, description: description||'',
-      fichierUrl: fichier.url, fichierNom: fichier.nom, fichierType: fichier.type, fichierPath: fichier.path,
+      fichierUrl: fichier.url, fichierNom: fichier.nom, fichierType: fichier.type,
       auteurNom: auteur.auteurNom, auteurRole: auteur.auteurRole, profCode: auteur.profCode||null,
       createdAt: Date.now()
     });
@@ -1758,10 +1673,8 @@ async function soumettreAnnale(prefix, auteur){
 
 window.supprimerAnnale = async function(annaleId){
   if(!confirm('Supprimer définitivement cette annale ?')) return;
-  const a = annalesCache.find(x=>x.id===annaleId);
   try{
     await window.fbDeleteDoc(window.fbDoc(window.fbDB,'edtxAnnales', annaleId));
-    if(a && a.fichierPath){ try{ window.fbDeleteObject(window.fbStorageRef(window.fbStorage, a.fichierPath)); }catch(e){} }
   }catch(e){ alert('Erreur de suppression : ' + (e && e.message ? e.message : e)); }
 };
 
@@ -1828,9 +1741,8 @@ function renderAnnaleItem(a, peutSupprimer){
       <div class="annale-titre">${esc(a.titre)}</div>
       ${a.description ? `<div class="annale-desc">${esc(a.description)}</div>` : ''}
       ${a.fichierType==='image'
-        ? `<a href="${a.fichierUrl}" target="_blank" rel="noopener" data-media-url="${esc(a.fichierUrl)}" data-media-kind="image"><img class="annale-img-prev" src="${a.fichierUrl}" alt="Sujet"></a>`
-        : `<a class="annale-file-link" href="${a.fichierUrl}" rel="noopener" data-media-url="${esc(a.fichierUrl)}" data-media-kind="file" onclick="event.preventDefault(); window.forceDownloadFile(this.href, '${esc(a.fichierNom).replace(/'/g,"\\'")}')">📥 ${esc(a.fichierNom)}</a>`}
-      <div class="media-offline-slot"></div>
+        ? `<a href="${a.fichierUrl}" target="_blank" rel="noopener"><img class="annale-img-prev" src="${a.fichierUrl}" alt="Sujet"></a>`
+        : `<a class="annale-file-link" href="${a.fichierUrl}" download="${esc(a.fichierNom)}">📥 ${esc(a.fichierNom)}</a>`}
       <div class="annale-meta">
         <span class="q-time">${a.auteurRole==='admin'?'🛠️':'🧑‍🏫'} ${esc(a.auteurNom)} · ${fmtTime(a.createdAt)}</span>
         ${peutSupprimer?`<button type="button" class="q-del-btn" onclick="supprimerAnnale('${a.id}')" title="Supprimer cette annale">🗑️</button>`:''}
